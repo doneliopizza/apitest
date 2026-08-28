@@ -1,0 +1,122 @@
+<section class="clientes-page">
+
+    <div class="clientes-header">
+
+        <div>
+            <span class="eyebrow">CLIENTES</span>
+            <h2>Clientes</h2>
+        </div>
+
+        <button
+            type="button"
+            class="btn-nuevo-cliente"
+            id="btnNuevoCliente"
+        >
+            + Nuevo cliente
+        </button>
+
+    </div>
+
+    <div class="clientes-search">
+
+        <span>🔎</span>
+
+        <input
+            type="text"
+            id="clientesBuscar"
+            placeholder="Buscar por nombre, teléfono, documento o dirección..."
+            autocomplete="off"
+        >
+
+        <select id="clientesFiltroEstado">
+            <option value="activos">Activos</option>
+            <option value="inactivos">Inactivos</option>
+            <option value="todos">Todos</option>
+        </select>
+
+    </div>
+
+    <div
+        id="clientesLista"
+        class="clientes-lista"
+    ></div>
+
+</section>
+
+
+<!-- =====================================================
+     MODAL - CREAR / EDITAR CLIENTE
+====================================================== -->
+
+<div
+    class="client-modal"
+    id="clienteModal"
+    style="display: none;"
+>
+
+    <div class="client-modal-box">
+
+        <div class="client-modal-header">
+            <h3 id="clienteModalTitulo">Nuevo cliente</h3>
+            <button
+                type="button"
+                class="client-modal-close"
+                id="clienteModalCerrar"
+            >✕</button>
+        </div>
+
+        <form class="client-form" id="clienteForm">
+
+            <div class="client-form-field">
+                <label for="clFormNombre">Nombre *</label>
+                <input type="text" id="clFormNombre" required>
+            </div>
+
+            <div class="client-form-field">
+                <label for="clFormTelefono">Teléfono</label>
+                <input type="tel" id="clFormTelefono">
+            </div>
+
+            <div class="client-form-field">
+                <label for="clFormEmail">Email</label>
+                <input type="email" id="clFormEmail">
+            </div>
+
+            <div class="client-form-field">
+                <label for="clFormDocumento">Documento</label>
+                <input type="text" id="clFormDocumento">
+            </div>
+
+            <div class="client-form-field">
+                <label for="clFormDomicilio">Domicilio fiscal</label>
+                <input type="text" id="clFormDomicilio">
+            </div>
+
+            <div class="client-form-field">
+                <label for="clFormObservaciones">Observaciones</label>
+                <input type="text" id="clFormObservaciones">
+            </div>
+
+        </form>
+
+        <div class="client-modal-actions">
+            <button
+                type="button"
+                class="client-modal-cancel"
+                id="clienteModalCancelar"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="client-modal-save"
+                id="clienteModalGuardar"
+            >
+                Guardar
+            </button>
+        </div>
+
+    </div>
+
+</div>

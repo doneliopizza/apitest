@@ -1,0 +1,1 @@
+window.LIGHTPOS_API_URL = "https://dev-api.doneliopizzeria.com.ar";

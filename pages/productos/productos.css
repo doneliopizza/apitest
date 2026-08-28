@@ -1,0 +1,618 @@
+.productos-page {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 20px 24px 40px;
+}
+
+.productos-header h2 {
+    margin: 4px 0 14px;
+    color: var(--text);
+    font-size: 20px;
+}
+
+.productos-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ptab {
+    height: 36px;
+    padding: 0 14px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.ptab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.ptab-hint {
+    max-width: 100%;
+    margin: 0 0 12px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.pfiltros-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    flex-wrap: wrap;
+}
+
+.pfiltros-row::before {
+    content: "⚙";
+    color: var(--muted);
+    font-size: 13px;
+    margin-right: 2px;
+}
+
+.pfiltros-row select {
+    height: 34px;
+    padding: 0 28px 0 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 7px;
+    background:
+        var(--panel)
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238a93a3' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+        no-repeat right 10px center;
+    -webkit-appearance: none;
+    appearance: none;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 150px;
+    cursor: pointer;
+    transition: border-color .15s ease;
+}
+
+.pfiltros-row select:hover {
+    border-color: var(--primary);
+}
+
+.pfiltros-row select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, .18);
+}
+
+/* Cuando el filtro de Estado no está en "Activos", se
+   resalta para avisar que la lista está filtrada */
+
+.pfiltros-row select#filtroEstado.filtro-activo {
+    border-color: var(--primary);
+    color: var(--primary);
+    background-color: rgba(59, 130, 246, .08);
+}
+
+@media (max-width: 700px) {
+
+    .pfiltros-row select {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+.ptab-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    max-width: 100%;
+    margin-bottom: 14px;
+}
+
+.ptab-actions input {
+    flex: 1;
+    max-width: 320px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--input);
+    color: var(--text);
+    font-size: 13px;
+}
+
+.btn-primario {
+    height: 38px;
+    padding: 0 16px;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.btn-primario:hover {
+    background: var(--primary-dark);
+}
+
+.btn-secundario {
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--panel-soft);
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.p-lista {
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.p-vacio {
+    padding: 26px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.p-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 110px 100px auto;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+}
+
+.p-row.inactivo {
+    opacity: .5;
+}
+
+.p-nombre {
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.p-sub {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.p-badge {
+    justify-self: start;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.p-badge.compuesto {
+    background: rgba(230, 130, 45, .18);
+    color: #df8a35;
+}
+
+.p-precio {
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.p-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.p-actions button {
+    height: 30px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    background: var(--panel-soft);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.p-actions button:hover {
+    border-color: var(--primary);
+    color: var(--text);
+}
+
+.p-actions button.danger:hover {
+    border-color: rgba(185, 101, 101, .6);
+    color: var(--danger);
+}
+
+/* Solo la fila de Productos usa botones-icono cuadrados
+   (Hijos/Grupos/Editar/Desactivar con emoji, sin texto) */
+
+.p-row-producto .p-actions button {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   MODALES (genérico, no depende de ventas.css)
+========================================================= */
+
+.pmodal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, .6);
+}
+
+.pmodal-box {
+    width: min(460px, 100%);
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+    overflow: hidden;
+}
+
+.pmodal-box-lg {
+    width: min(560px, 100%);
+}
+
+.pmodal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.pmodal-header h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 15px;
+}
+
+.pmodal-header button {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--panel-soft);
+    color: var(--muted);
+}
+
+.pmodal-body {
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.pform-row {
+    display: flex;
+    gap: 10px;
+}
+
+.pform-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pform-field-sm {
+    flex: 0 0 110px;
+}
+
+.pform-field label {
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+}
+
+.pform-field input,
+.pform-field select {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--input);
+    color: var(--text);
+    font-size: 13px;
+}
+
+.ptipo-toggle {
+    display: flex;
+    gap: 8px;
+}
+
+.ptipo-btn {
+    flex: 1;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel-soft);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ptipo-btn.active {
+    border-color: var(--primary);
+    background: rgba(75, 131, 181, .15);
+    color: var(--primary);
+}
+
+.pcomponentes-builder {
+    padding: 12px;
+    border: 1px dashed var(--border-light);
+    border-radius: 9px;
+}
+
+.pcomponentes-builder > label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.pcomp-add-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.pcomp-add-row select:first-child {
+    flex: 1;
+}
+
+.pcomp-add-row input {
+    width: 60px;
+}
+
+.pcomp-add-row select,
+.pcomp-add-row input {
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--input);
+    color: var(--text);
+    font-size: 12px;
+}
+
+.pcomp-add-row button {
+    flex-shrink: 0;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--primary);
+    border-radius: 6px;
+    background: var(--primary);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.pcomp-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pcomp-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 9px;
+    background: var(--panel-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text);
+}
+
+.pcomp-item span.muted {
+    color: var(--muted);
+    font-size: 10.5px;
+}
+
+.pcomp-item button {
+    border: 0;
+    background: transparent;
+    color: var(--danger);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.pmodal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 13px 16px;
+    border-top: 1px solid var(--border);
+}
+
+.pmodal-actions button {
+    height: 36px;
+    padding: 0 15px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--panel-soft);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.pgrupo-form {
+    padding: 12px;
+    margin-bottom: 14px;
+    border: 1px dashed var(--border-light);
+    border-radius: 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pgrupos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pgrupo-item {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pgrupo-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--panel-soft);
+}
+
+.pgrupo-item-header strong {
+    color: var(--text);
+    font-size: 12.5px;
+}
+
+.pgrupo-item-header span {
+    color: var(--muted);
+    font-size: 10.5px;
+}
+
+.pgrupo-item-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.pgrupo-item-actions button {
+    height: 26px;
+    padding: 0 8px;
+    border: 1px solid var(--border-light);
+    border-radius: 5px;
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 10.5px;
+    font-weight: 700;
+}
+
+.pgrupo-opciones {
+    padding: 10px 12px;
+    display: none;
+}
+
+.pgrupo-opciones.abierto {
+    display: block;
+}
+
+.popcion-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    background: var(--panel-soft);
+    border-radius: 5px;
+    font-size: 11.5px;
+    color: var(--text);
+}
+
+.popcion-item button {
+    border: 0;
+    background: transparent;
+    color: var(--danger);
+    font-size: 10.5px;
+    font-weight: 700;
+}
+
+@media (max-width: 700px) {
+
+    .productos-page {
+        padding: 16px;
+    }
+
+    .p-row-producto {
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+            "info   badge"
+            "precio acciones";
+        row-gap: 6px;
+    }
+
+    .p-row-producto .p-info {
+        grid-area: info;
+        min-width: 0;
+    }
+
+    .p-row-producto .p-badge {
+        grid-area: badge;
+        justify-self: end;
+        align-self: start;
+    }
+
+    .p-row-producto .p-precio {
+        grid-area: precio;
+        align-self: center;
+    }
+
+    .p-row-producto .p-actions {
+        grid-area: acciones;
+        justify-self: end;
+    }
+
+    .pform-row {
+        flex-direction: column;
+    }
+
+    .pform-field-sm {
+        flex: 1;
+    }
+}

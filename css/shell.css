@@ -1,0 +1,254 @@
+/* =========================================================
+   SHELL — solo lo que ventas.css todavía no define.
+   Variables (--primary, --panel, --sidebar, etc.), .sidebar,
+   .brand, .menu-item, .toast ya están en ventas.css.
+========================================================= */
+
+
+/* =========================================================
+   GRUPOS DE MENÚ (Productos, Compras...)
+========================================================= */
+
+.menu {
+    display: flex;
+    flex-direction: column;
+
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding-right: 2px;
+}
+
+.menu::-webkit-scrollbar {
+    width: 4px;
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background: #303945;
+    border-radius: 10px;
+}
+
+.menu-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-group summary {
+    list-style: none;
+    cursor: pointer;
+}
+
+.menu-group summary::-webkit-details-marker {
+    display: none;
+}
+
+.menu-group summary.menu-item {
+    justify-content: space-between;
+}
+
+.menu-group summary .menu-item-main {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.menu-chevron {
+    font-size: 11px;
+    color: var(--sidebar-muted);
+    transition: transform .15s ease;
+}
+
+.menu-group[open] > summary .menu-chevron {
+    transform: rotate(90deg);
+}
+
+.submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    margin: 3px 0 4px 20px;
+    padding-left: 12px;
+
+    border-left: 1px solid var(--border-light, #3d444e);
+}
+
+.submenu .menu-item {
+    height: 37px;
+    font-size: 13px;
+}
+
+.submenu .menu-item b {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.sidebar.collapsed .submenu,
+.sidebar.collapsed .menu-chevron {
+    display: none;
+}
+
+
+/* =========================================================
+   CERRAR SESIÓN — último ítem de la lista, separado
+========================================================= */
+
+.menu-logout {
+    width: 100%;
+
+    margin-top: 10px;
+    padding-top: 14px;
+
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, .07);
+
+    background: transparent;
+
+    text-align: left;
+}
+
+.menu-logout:hover,
+.menu-logout:focus-visible {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+.menu-logout:hover span:first-child,
+.menu-logout:focus-visible span:first-child {
+    color: var(--danger);
+}
+
+
+/* =========================================================
+   BOTÓN FLOTANTE — abrir sidebar en mobile
+========================================================= */
+
+.btn-menu-floating {
+    display: none;
+
+    position: fixed;
+
+    top: 14px;
+    left: 14px;
+
+    width: 38px;
+    height: 38px;
+
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: var(--panel);
+    color: var(--text);
+
+    font-size: 17px;
+
+    box-shadow: var(--shadow);
+
+    z-index: 500;
+}
+
+@media (max-width: 900px) {
+
+    .btn-menu-floating {
+        display: flex;
+    }
+
+    .sidebar-toggle {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   VIEW ROOT — donde se monta cada módulo, ocupa todo el alto
+========================================================= */
+
+.main {
+    /* ya es flex column 100vh vía ventas.css */
+}
+
+.view-root {
+    flex: 1;
+
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.view-loading {
+    flex: 1;
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PLACEHOLDER — módulos todavía no construidos
+========================================================= */
+
+.module-placeholder {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    text-align: center;
+
+    padding: 40px;
+}
+
+.module-placeholder-icon {
+    font-size: 40px;
+
+    margin-bottom: 6px;
+
+    opacity: .8;
+}
+
+.module-placeholder h2 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 18px;
+}
+
+.module-placeholder p {
+    margin: 0;
+
+    max-width: 360px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — sidebar mobile ya maneja .open vía ventas.css
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .btn-menu-floating {
+        top: 10px;
+        left: 10px;
+    }
+}

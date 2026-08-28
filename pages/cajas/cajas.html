@@ -1,0 +1,201 @@
+<section class="cajas-page">
+
+    <div class="cajas-header">
+        <span class="eyebrow">CAJA</span>
+        <h2 id="cajaTitulo">Estado de caja</h2>
+    </div>
+
+    <div class="productos-tabs" id="cajasTabs">
+        <button type="button" class="ptab active" data-cajas-tab="caja">Caja</button>
+        <button type="button" class="ptab" data-cajas-tab="gastos">Gastos</button>
+    </div>
+
+    <div id="tabCaja">
+
+    <!-- =================================================
+         CAJA CERRADA -> FORMULARIO PARA ABRIR
+    ================================================== -->
+
+    <div class="caja-box" id="cajaCerradaBox" style="display:none;">
+
+        <p class="caja-hint">
+            No hay ninguna caja abierta. Elegí una caja y el
+            monto inicial con el que arrancás el turno.
+        </p>
+
+        <div class="pform-field">
+            <label>Caja</label>
+            <select id="selectCaja"></select>
+        </div>
+
+        <div class="pform-field">
+            <label>Monto inicial</label>
+            <input type="number" step="0.01" id="montoInicial" value="0">
+        </div>
+
+        <button type="button" class="btn-primario" id="btnAbrirCaja" style="width:100%;">
+            Abrir caja
+        </button>
+
+        <div class="caja-crear-rapida">
+            <input type="text" id="nuevaCajaNombre" placeholder="o creá una caja nueva (ej: Caja 1)">
+            <button type="button" id="btnCrearCaja">Crear</button>
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         CAJA ABIERTA -> ARQUEO EN VIVO
+    ================================================== -->
+
+    <div class="caja-box" id="cajaAbiertaBox" style="display:none;">
+
+        <div class="caja-info-row">
+            <div>
+                <strong id="cajaNombreActual">—</strong>
+                <span id="cajaAperturaInfo" class="caja-sub">—</span>
+            </div>
+            <span class="caja-badge-abierta">● ABIERTA</span>
+        </div>
+
+        <div class="caja-resumen">
+
+            <div class="caja-resumen-item">
+                <span>Monto inicial</span>
+                <strong id="resMontoInicial">$ 0</strong>
+            </div>
+
+            <div class="caja-resumen-item">
+                <span>Efectivo (ventas)</span>
+                <strong id="resEfectivoVentas">$ 0</strong>
+            </div>
+
+            <div class="caja-resumen-item">
+                <span>Movimientos manuales</span>
+                <strong id="resMovimientos">$ 0</strong>
+            </div>
+
+            <div class="caja-resumen-item caja-resumen-total">
+                <span>ESPERADO EN CAJA</span>
+                <strong id="resEsperado">$ 0</strong>
+            </div>
+
+        </div>
+
+        <div class="caja-seccion">
+            <span class="eyebrow">VENTAS POR MEDIO DE PAGO</span>
+            <div id="ventasPorMedio" class="caja-lista-simple"></div>
+        </div>
+
+        <div class="caja-seccion">
+
+            <div class="caja-seccion-header">
+                <span class="eyebrow">MOVIMIENTOS MANUALES</span>
+                <button type="button" id="btnNuevoMovimiento">+ Ingreso / Egreso</button>
+            </div>
+
+            <div id="movimientosLista" class="caja-lista-simple"></div>
+
+        </div>
+
+        <div class="caja-cierre">
+
+            <label>Contado real (para cerrar)</label>
+
+            <div class="caja-cierre-row">
+                <input type="number" step="0.01" id="montoCierre" placeholder="$ 0">
+                <button type="button" class="btn-danger" id="btnCerrarCaja">
+                    Cerrar caja
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TAB: GASTOS
+    ================================================== -->
+
+    <div id="tabGastos" style="display:none;">
+
+        <div class="caja-box" style="max-width:560px;">
+
+            <p class="caja-hint">
+                Cargá acá cualquier gasto del día (compras
+                menores, insumos, etc.) — más adelante se va
+                a poder ver todo esto en los reportes.
+            </p>
+
+            <div class="pform-field">
+                <label>Tipo de gasto</label>
+                <input type="text" id="gastoTipo" placeholder="Ej: Insumos, Delivery, Mantenimiento...">
+            </div>
+
+            <div class="pform-field">
+                <label>Detalle</label>
+                <input type="text" id="gastoDetalle" placeholder="Ej: Bolsas de papel x100">
+            </div>
+
+            <div class="pform-field">
+                <label>Monto</label>
+                <input type="number" step="0.01" id="gastoMonto" placeholder="$ 0">
+            </div>
+
+            <button type="button" class="btn-primario" id="btnGuardarGasto" style="width:100%;">
+                Registrar gasto
+            </button>
+
+        </div>
+
+        <div id="gastosLista" class="caja-lista-simple" style="max-width:560px; margin-top:16px;"></div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MODAL: NUEVO MOVIMIENTO
+====================================================== -->
+
+<div class="pmodal" id="movimientoModal" style="display:none;">
+
+    <div class="pmodal-box">
+
+        <div class="pmodal-header">
+            <h3>Nuevo movimiento</h3>
+            <button type="button" id="movimientoModalCerrar">✕</button>
+        </div>
+
+        <div class="pmodal-body">
+
+            <div class="ptipo-toggle">
+                <button type="button" class="ptipo-btn active" data-tipo-mov="INGRESO">Ingreso</button>
+                <button type="button" class="ptipo-btn" data-tipo-mov="EGRESO">Egreso</button>
+            </div>
+
+            <div class="pform-field">
+                <label>Concepto</label>
+                <input type="text" id="movConcepto" placeholder="Ej: Cambio, retiro, compra menor...">
+            </div>
+
+            <div class="pform-field">
+                <label>Monto</label>
+                <input type="number" step="0.01" id="movMonto">
+            </div>
+
+        </div>
+
+        <div class="pmodal-actions">
+            <button type="button" id="movimientoModalCancelar">Cancelar</button>
+            <button type="button" class="btn-primario" id="movimientoModalGuardar">Guardar</button>
+        </div>
+
+    </div>
+
+</div>

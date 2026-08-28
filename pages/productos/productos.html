@@ -1,0 +1,491 @@
+<section class="productos-page">
+
+    <div class="productos-header">
+        <span class="eyebrow">CATÁLOGO</span>
+        <h2>Productos</h2>
+    </div>
+
+    <div class="productos-tabs" id="productosTabs">
+        <button type="button" class="ptab active" data-tab="productos">Productos</button>
+        <button type="button" class="ptab" data-tab="rubros">Rubros</button>
+        <button type="button" class="ptab" data-tab="categorias">Categorías</button>
+        <button type="button" class="ptab" data-tab="plantillas">Plantillas</button>
+    </div>
+
+
+    <!-- =================================================
+         TAB: PRODUCTOS
+    ================================================== -->
+
+    <div class="ptab-panel" id="tabProductos">
+
+        <div class="ptab-actions">
+            <input
+                type="text"
+                id="productosBuscar"
+                placeholder="Buscar producto..."
+            >
+            <button type="button" class="btn-primario" id="btnNuevoProducto">
+                + Nuevo producto
+            </button>
+        </div>
+
+        <div class="pfiltros-row">
+
+            <select id="filtroRubro">
+                <option value="">Todos los rubros</option>
+            </select>
+
+            <select id="filtroCategoria">
+                <option value="">Todas las categorías</option>
+            </select>
+
+            <select id="filtroEstado">
+                <option value="activos">Activos</option>
+                <option value="inactivos">Inactivos</option>
+                <option value="todos">Todos</option>
+            </select>
+
+        </div>
+
+        <div id="productosLista" class="p-lista"></div>
+
+    </div>
+
+
+    <!-- =================================================
+         TAB: RUBROS
+    ================================================== -->
+
+    <div class="ptab-panel" id="tabRubros" style="display:none;">
+
+        <div class="ptab-actions">
+            <span></span>
+            <button type="button" class="btn-primario" id="btnNuevoRubro">
+                + Nuevo rubro
+            </button>
+        </div>
+
+        <div id="rubrosLista" class="p-lista"></div>
+
+    </div>
+
+
+    <!-- =================================================
+         TAB: CATEGORÍAS
+    ================================================== -->
+
+    <div class="ptab-panel" id="tabCategorias" style="display:none;">
+
+        <div class="ptab-actions">
+            <span></span>
+            <button type="button" class="btn-primario" id="btnNuevaCategoria">
+                + Nueva categoría
+            </button>
+        </div>
+
+        <div id="categoriasLista" class="p-lista"></div>
+
+    </div>
+
+
+    <!-- =================================================
+         TAB: PLANTILLAS
+    ================================================== -->
+
+    <div class="ptab-panel" id="tabPlantillas" style="display:none;">
+
+        <p class="ptab-hint">
+            Grupos reutilizables — creá "Sabores" una vez
+            y vinculalo a todas las pizzas/empanadas que
+            lo usen, desde el botón "Grupos" de cada producto.
+        </p>
+
+        <div class="ptab-actions">
+            <span></span>
+            <button type="button" class="btn-primario" id="btnNuevaPlantilla">
+                + Nueva plantilla
+            </button>
+        </div>
+
+        <div id="plantillasLista" class="p-lista"></div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MODAL: PRODUCTO (crear / editar)
+====================================================== -->
+
+<div class="pmodal" id="productoModal" style="display:none;">
+
+    <div class="pmodal-box pmodal-box-lg">
+
+        <div class="pmodal-header">
+            <h3 id="productoModalTitulo">Nuevo producto</h3>
+            <button type="button" id="productoModalCerrar">✕</button>
+        </div>
+
+        <div class="pmodal-body">
+
+            <div class="pform-row">
+                <div class="pform-field">
+                    <label>Nombre *</label>
+                    <input type="text" id="pNombre">
+                </div>
+                <div class="pform-field pform-field-sm">
+                    <label>Código</label>
+                    <input type="text" id="pCodigo">
+                </div>
+            </div>
+
+            <div class="pform-row">
+                <div class="pform-field">
+                    <label>Rubro</label>
+                    <select id="pRubro"><option value="">Sin rubro</option></select>
+                </div>
+                <div class="pform-field">
+                    <label>Categoría</label>
+                    <select id="pCategoria"><option value="">Sin categoría</option></select>
+                </div>
+            </div>
+
+            <div class="pform-row">
+                <div class="pform-field pform-field-sm">
+                    <label>Precio *</label>
+                    <input type="number" step="0.01" id="pPrecio">
+                </div>
+                <div class="pform-field pform-field-sm">
+                    <label>Costo</label>
+                    <input type="number" step="0.01" id="pCosto">
+                </div>
+                <div class="pform-field pform-field-sm">
+                    <label>Stock mínimo</label>
+                    <input type="number" step="0.01" id="pStockMinimo">
+                </div>
+            </div>
+
+            <div class="pform-field">
+                <label>Descripción</label>
+                <input type="text" id="pDescripcion">
+            </div>
+
+            <div class="pform-field">
+                <label>Tipo de producto</label>
+                <div class="ptipo-toggle">
+                    <button type="button" class="ptipo-btn active" data-tipo="NORMAL">
+                        Normal
+                    </button>
+                    <button type="button" class="ptipo-btn" data-tipo="COMPUESTO">
+                        Compuesto
+                    </button>
+                </div>
+            </div>
+
+            <!-- Solo visible con COMPUESTO elegido -->
+            <div id="pCompuestoBox" style="display:none;">
+
+                <p class="ptab-hint" style="margin-top:0;">
+                    Para variedad con reglas de precio (elegir sabor,
+                    mitad y mitad, adicionales) usá <strong>Grupos</strong> o
+                    una <strong>Plantilla</strong> — eso se configura acá
+                    abajo o después de guardar. "Ingredientes fijos" es
+                    solo para una receta fija que no cambia el precio.
+                </p>
+
+                <!-- Solo al CREAR: vincular plantillas ya mismo -->
+                <div class="pform-field" id="pPlantillasVincularBox">
+                    <label>Vincular plantillas existentes (opcional)</label>
+                    <div id="pPlantillasVincularLista" class="pcomp-lista"></div>
+                </div>
+
+                <!-- Solo al EDITAR un producto ya guardado -->
+                <div id="pGruposEditarAviso" style="display:none;">
+                    <button type="button" class="btn-secundario" id="btnGestionarGrupos">
+                        Configurar Grupos de este producto
+                    </button>
+                </div>
+
+                <!-- Ingredientes fijos — secundario, colapsado -->
+                <details class="pcomponentes-builder" id="pComponentesBuilder" style="display:none;">
+
+                    <summary style="cursor:pointer; color:var(--muted); font-size:11.5px; font-weight:800; text-transform:uppercase;">
+                        Ingredientes fijos (opcional, no cambia el precio)
+                    </summary>
+
+                    <div class="pcomp-add-row" style="margin-top:10px;">
+                        <select id="pComponenteSelect"></select>
+                        <input type="number" step="0.01" value="1" id="pComponenteCantidad" placeholder="Cant.">
+                        <select id="pComponenteRelacion">
+                            <option value="FIJO">Fijo</option>
+                            <option value="SELECCION">Selección</option>
+                            <option value="OPCIONAL">Opcional</option>
+                        </select>
+                        <button type="button" id="pComponenteAgregar">Agregar</button>
+                    </div>
+
+                    <div id="pComponentesListaNueva" class="pcomp-lista"></div>
+
+                </details>
+
+                <!-- Solo al EDITAR un producto ya COMPUESTO -->
+                <div id="pComponentesEditarAviso" style="display:none; margin-top:8px;">
+                    <button type="button" class="btn-secundario" id="btnGestionarComponentes">
+                        Gestionar ingredientes fijos existentes
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="pmodal-actions">
+            <button type="button" id="productoModalCancelar">Cancelar</button>
+            <button type="button" class="btn-primario" id="productoModalGuardar">Guardar</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL: GESTIONAR COMPONENTES (producto ya existente)
+====================================================== -->
+
+<div class="pmodal" id="componentesModal" style="display:none;">
+
+    <div class="pmodal-box">
+
+        <div class="pmodal-header">
+            <h3 id="componentesModalTitulo">Componentes</h3>
+            <button type="button" id="componentesModalCerrar">✕</button>
+        </div>
+
+        <div class="pmodal-body">
+
+            <div class="pcomp-add-row">
+                <select id="cmComponenteSelect"></select>
+                <input type="number" step="0.01" value="1" id="cmCantidad" placeholder="Cant.">
+                <select id="cmRelacion">
+                    <option value="FIJO">Fijo</option>
+                    <option value="SELECCION">Selección</option>
+                    <option value="OPCIONAL">Opcional</option>
+                </select>
+                <button type="button" id="cmAgregar">Agregar</button>
+            </div>
+
+            <div id="componentesModalLista" class="pcomp-lista"></div>
+
+        </div>
+
+        <div class="pmodal-actions">
+            <button type="button" id="componentesModalCerrar2">Listo</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL: GRUPOS DE SELECCIÓN (min/máx por variedad)
+====================================================== -->
+
+<div class="pmodal" id="gruposModal" style="display:none;">
+
+    <div class="pmodal-box pmodal-box-lg">
+
+        <div class="pmodal-header">
+            <h3 id="gruposModalTitulo">Grupos</h3>
+            <button type="button" id="gruposModalCerrar">✕</button>
+        </div>
+
+        <div class="pmodal-body">
+
+            <div class="pgrupo-form" id="plantillasVinculadasBox">
+
+                <label style="display:block; margin-bottom:8px; color:var(--muted); font-size:10.5px; font-weight:800; text-transform:uppercase;">
+                    Plantillas vinculadas (reutilizables)
+                </label>
+
+                <div id="plantillasVinculadasLista"></div>
+
+            </div>
+
+            <div class="pgrupo-form">
+
+                <input type="hidden" id="gGrupoId">
+
+                <div class="pform-row">
+                    <div class="pform-field">
+                        <label>Nombre del grupo</label>
+                        <input type="text" id="gNombre" placeholder="Ej: Sabores">
+                    </div>
+                    <div class="pform-field pform-field-sm">
+                        <label>Mínimo</label>
+                        <input type="number" step="1" id="gMinimo" value="0">
+                    </div>
+                    <div class="pform-field pform-field-sm">
+                        <label>Máximo</label>
+                        <input type="number" step="1" id="gMaximo" value="0">
+                    </div>
+                </div>
+
+                <div class="pform-field" style="margin-top:6px;">
+                    <label>Categoría automática (opcional)</label>
+                    <select id="gCategoriaAuto">
+                        <option value="">— Cargar opciones a mano —</option>
+                    </select>
+                </div>
+
+                <div class="pform-field" style="margin-top:6px;">
+                    <label>Modo de precio</label>
+                    <select id="gModoPrecio">
+                        <option value="INCLUIDO">Incluido (precio normal del producto)</option>
+                        <option value="MAXIMO">El más caro de la selección (mitad y mitad)</option>
+                        <option value="SUMA">Adicional (cada extra suma su propio precio)</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-primario" id="gGuardarGrupo" style="width:100%; margin-top:10px;">
+                    Guardar grupo
+                </button>
+
+            </div>
+
+            <div id="gruposModalLista" class="pgrupos-lista"></div>
+
+        </div>
+
+        <div class="pmodal-actions">
+            <button type="button" id="gruposModalCerrar2">Listo</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL: RUBRO / CATEGORÍA (genérico)
+====================================================== -->
+
+<div class="pmodal" id="entidadModal" style="display:none;">
+
+    <div class="pmodal-box">
+
+        <div class="pmodal-header">
+            <h3 id="entidadModalTitulo">Nuevo rubro</h3>
+            <button type="button" id="entidadModalCerrar">✕</button>
+        </div>
+
+        <div class="pmodal-body">
+
+            <div class="pform-field" id="entidadRubroField" style="display:none;">
+                <label>Rubro *</label>
+                <select id="eRubro"></select>
+            </div>
+
+            <div class="pform-field">
+                <label>Nombre *</label>
+                <input type="text" id="eNombre">
+            </div>
+
+            <div class="pform-field">
+                <label>Descripción</label>
+                <input type="text" id="eDescripcion">
+            </div>
+
+        </div>
+
+        <div class="pmodal-actions">
+            <button type="button" id="entidadModalCancelar">Cancelar</button>
+            <button type="button" class="btn-primario" id="entidadModalGuardar">Guardar</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL: PLANTILLA (grupo reutilizable + sus opciones)
+====================================================== -->
+
+<div class="pmodal" id="plantillaModal" style="display:none;">
+
+    <div class="pmodal-box pmodal-box-lg">
+
+        <div class="pmodal-header">
+            <h3 id="plantillaModalTitulo">Nueva plantilla</h3>
+            <button type="button" id="plantillaModalCerrar">✕</button>
+        </div>
+
+        <div class="pmodal-body">
+
+            <input type="hidden" id="plGrupoId">
+
+            <div class="pform-row">
+                <div class="pform-field">
+                    <label>Nombre (ej: Sabores)</label>
+                    <input type="text" id="plNombre">
+                </div>
+                <div class="pform-field pform-field-sm">
+                    <label>Mínimo</label>
+                    <input type="number" step="1" id="plMinimo" value="0">
+                </div>
+                <div class="pform-field pform-field-sm">
+                    <label>Máximo</label>
+                    <input type="number" step="1" id="plMaximo" value="0">
+                </div>
+            </div>
+
+            <div class="pform-field" style="margin-top:6px;">
+                <label>Categoría automática (opcional)</label>
+                <select id="plCategoriaAuto">
+                    <option value="">— Cargar opciones a mano —</option>
+                </select>
+            </div>
+
+            <div class="pform-field" style="margin-top:6px;">
+                <label>Modo de precio</label>
+                <select id="plModoPrecio">
+                    <option value="INCLUIDO">Incluido (precio normal del producto)</option>
+                    <option value="MAXIMO">El más caro de la selección (mitad y mitad)</option>
+                    <option value="SUMA">Adicional (cada extra suma su propio precio)</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn-primario" id="plGuardarDatos" style="width:100%; margin-top:10px;">
+                Guardar datos de la plantilla
+            </button>
+
+            <div id="plOpcionesBox" style="display:none;">
+
+                <label style="display:block; margin: 14px 0 8px; color:var(--muted); font-size:10.5px; font-weight:800; text-transform:uppercase;">
+                    Opciones de esta plantilla
+                </label>
+
+                <div class="pcomp-add-row">
+                    <select id="plComponenteSelect"></select>
+                    <input type="number" step="1" value="1" id="plOpcionMin" placeholder="Mín">
+                    <input type="number" step="1" value="1" id="plOpcionMax" placeholder="Máx">
+                    <button type="button" id="plAgregarOpcion">Agregar</button>
+                </div>
+
+                <div id="plOpcionesLista" class="pcomp-lista"></div>
+
+            </div>
+
+        </div>
+
+        <div class="pmodal-actions">
+            <button type="button" id="plantillaModalCerrar2">Listo</button>
+        </div>
+
+    </div>
+
+</div>

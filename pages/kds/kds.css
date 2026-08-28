@@ -1,0 +1,186 @@
+.kds-page {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 20px 24px 40px;
+    background: #0e1319;
+}
+
+.kds-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.kds-header h2 {
+    margin: 4px 0 0;
+    color: var(--text);
+    font-size: 20px;
+}
+
+.kds-counter {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 10px;
+    display: grid;
+    place-items: center;
+    border-radius: 20px;
+    background: rgba(59, 130, 246, .15);
+    color: var(--primary);
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.kds-vacio {
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   GRID DE TARJETAS
+========================================================= */
+
+.kds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 14px;
+}
+
+
+/* =========================================================
+   TARJETA
+========================================================= */
+
+.kds-card {
+    display: flex;
+    flex-direction: column;
+
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.kds-card-title {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 14px;
+    color: white;
+    font-weight: 800;
+}
+
+.kds-card-title .kds-numero {
+    font-size: 20px;
+}
+
+.kds-card-title .kds-time {
+    font-size: 12px;
+    font-weight: 700;
+    opacity: .9;
+    white-space: nowrap;
+}
+
+/* Colores por tiempo transcurrido */
+
+.kds-verde   { background: #1f9d55; }
+.kds-naranja { background: #c9761f; }
+.kds-rojo    { background: #c0392b; }
+
+
+/* =========================================================
+   META (cliente / tipo entrega)
+========================================================= */
+
+.kds-meta {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ITEMS (vertical, tipo ticket)
+========================================================= */
+
+.kds-body {
+    flex: 1;
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.kds-item strong {
+    display: block;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.kds-suboptions {
+    margin-top: 3px;
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.kds-suboptions span {
+    color: var(--muted);
+    font-size: 11.5px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.kds-footer {
+    padding: 10px 14px;
+    border-top: 1px solid var(--border);
+}
+
+.kds-listo-btn {
+    width: 100%;
+    height: 42px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .3px;
+}
+
+.kds-listo-btn:hover {
+    background: var(--primary-dark);
+}
+
+.kds-listo-btn:active {
+    transform: scale(.98);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .kds-page {
+        padding: 14px;
+    }
+
+    .kds-grid {
+        grid-template-columns: 1fr;
+    }
+}

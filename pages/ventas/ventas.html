@@ -1,0 +1,708 @@
+<!-- =================================================
+             WORKSPACE
+        ================================================== -->
+
+        <section class="workspace">
+
+
+            <!-- =================================================
+                 CLIENTE
+            ================================================== -->
+
+            <section class="panel client-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            CLIENTE
+                        </span>
+
+                        <h2>
+                            Datos de la venta
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="small-button"
+                        id="newClientButton"
+                    >
+                        + Cliente
+                    </button>
+
+                </div>
+
+
+                <div class="client-card">
+
+                    <!-- FILA 0: CLIENTE ACTUAL -->
+                    <div class="client-selected-row">
+
+                        <div class="client-avatar">
+                            C
+                        </div>
+
+                        <div class="client-info">
+
+                            <strong id="clientName">
+                                Sin cliente seleccionado
+                            </strong>
+
+                            <span id="clientDocument">
+                                Seleccioná un cliente para la venta
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FILA 1: BUSCADOR (por nombre, dirección o teléfono a la vez) -->
+                    <div class="client-search-row">
+
+                        <button
+                            type="button"
+                            class="client-search-icon"
+                            id="searchClientButton"
+                            title="Buscar cliente"
+                        >
+                            🔎
+                        </button>
+
+                        <input
+                            type="text"
+                            id="clientSearch"
+                            placeholder="Buscar por nombre, dirección o teléfono..."
+                            autocomplete="off"
+                        >
+
+                    </div>
+
+
+
+                    <!-- FILA 3: MOSTRADOR -->
+                    <label class="counter-sale client-counter">
+
+                        <input
+                            type="checkbox"
+                            id="ventaMostrador"
+                        >
+
+                        <span>
+                            Venta mostrador
+                        </span>
+
+                    </label>
+
+
+                    <!-- FILA 4: DIRECCIÓN 1 -->
+
+                    <div class="client-address">
+                        <span>
+                            Teléfono
+                        </span>
+                        <strong id="clientPhone">
+                            —
+                        </strong>
+                    </div>
+
+                    <!-- FILA 5: DIRECCIÓN -->
+                    <div class="client-address">
+                        <span>
+                            Dirección
+                        </span>
+                        <strong id="clientAddress1">
+                            —
+                        </strong>
+                    </div>
+
+                    <!-- Solo visible al editar un pedido: permite
+                         escribir una dirección distinta a la del
+                         cliente, puntual para ese pedido -->
+                    <div class="pform-field" id="editDireccionBox" style="display:none; margin-top:8px;">
+                        <label>Dirección de entrega</label>
+                        <input type="text" id="editDireccionInput" placeholder="Dirección de entrega...">
+                    </div>
+
+
+
+
+                    <!-- FILA 6: EDITAR -->
+                    <button
+                        type="button"
+                        class="client-edit-button"
+                        id="editClientButton"
+                    >
+                        Editar cliente
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                    RESULTADOS DE CLIENTES
+                ================================================== -->
+
+                <div
+                    class="client-selector"
+                    id="clientSelector"
+                    style="display:none;"
+                >
+
+                    <div class="client-selector-box">
+
+                        <div class="client-selector-header">
+
+                            <div>
+
+                                <span class="eyebrow">
+                                    CLIENTES
+                                </span>
+
+                                <h3>
+                                    Seleccionar cliente
+                                </h3>
+
+                            </div>
+
+                            <button
+                                type="button"
+                                id="closeClientSelector"
+                            >
+                                ✕
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="clientsList"
+                            class="clients-list"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PEDIDOS ACTIVOS
+            ================================================== -->
+
+
+            <section class="panel orders-panel">
+
+                <div class="panel-header orders-header">
+
+                    <div class="orders-title">
+                        <span class="eyebrow">
+                            OPERACIÓN
+                        </span>
+
+                        <h2>
+                            Pedidos activos
+                        </h2>
+                    </div>
+
+                    <div class="orders-actions">
+
+                        <button
+                            type="button"
+                            class="order-action"
+                            id="reprintOrderButton"
+                            title="Reimprimir pedido"
+                        >
+                            🖨
+                            <span>Reimprimir</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="order-action"
+                            id="editOrderButton"
+                            title="Editar pedido"
+                        >
+                            ✏
+                            <span>Editar</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="order-action danger"
+                            id="cancelOrderButton"
+                            title="Cancelar pedido"
+                        >
+                            ✕
+                            <span>Cancelar</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="order-action"
+                            id="detailOrderButton"
+                            title="Ver detalle"
+                        >
+                            👁
+                            <span>Detalle</span>
+                        </button>
+
+                    </div>
+
+                    <span
+                        class="counter"
+                        id="orderCounter"
+                    >
+                        0
+                    </span>
+
+                </div>
+
+                <div
+                    class="orders-list"
+                    id="ordersList"
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PRODUCTOS
+            ================================================== -->
+
+            <section class="panel products-panel">
+
+                <div class="panel-header products-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            CATÁLOGO
+                        </span>
+
+                        <h2>
+                            Productos
+                        </h2>
+
+                    </div>
+
+
+                    <div class="search">
+
+                        <span>
+                            🔎
+                        </span>
+
+                        <input
+                            id="productSearch"
+                            type="text"
+                            placeholder="Buscar producto..."
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="categories"
+                    id="categories"
+                ></div>
+
+
+                <div
+                    class="products-grid"
+                    id="productsGrid"
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CARRITO
+            ================================================== -->
+
+            <section class="panel cart-panel">
+
+                <div class="panel-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            VENTA ACTUAL
+                        </span>
+
+                        <h2>
+                            Detalle / carrito
+                        </h2>
+
+                    </div>
+
+                    <button
+                        class="clear-button"
+                        id="clearCartButton"
+                    >
+                        Vaciar
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="cart-list"
+                    id="cartList"
+                ></div>
+
+
+                <div class="cart-summary">
+
+                    <div>
+
+                        <span>
+                            Subtotal
+                        </span>
+
+                        <strong id="subtotal">
+                            $ 0
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Descuento
+                        </span>
+
+                        <strong id="discount">
+                            $ 0
+                        </strong>
+
+                    </div>
+
+                    <div class="cart-total">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong id="total">
+                            $ 0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 COBRO
+            ================================================== -->
+
+            <section class="panel payment-panel">
+
+
+
+
+                <div class="payment-total">
+
+                    <span>
+                        Total a cobrar
+                    </span>
+
+                    <strong id="paymentTotal">
+                        $ 0
+                    </strong>
+
+                </div>
+
+
+                <div class="discount-row">
+
+                    <label class="field-label" style="margin:0;">
+                        Descuento
+                    </label>
+
+                    <div class="discount-inputs">
+
+                        <select id="discountType">
+                            <option value="MONTO">$</option>
+                            <option value="PORCENTAJE">%</option>
+                        </select>
+
+                        <input
+                            id="discountValue"
+                            type="number"
+                            min="0"
+                            placeholder="0"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <label class="field-label">
+                    Medio de pago
+                </label>
+
+
+                <div
+                    class="payment-methods"
+                    id="paymentMethods"
+                >
+
+                    <button
+                        class="payment-method active"
+                        data-method="Efectivo"
+                    >
+                        💵
+                        <span>
+                            Efectivo
+                        </span>
+                    </button>
+
+                    <button
+                        class="payment-method"
+                        data-method="Transferencia"
+                    >
+                        🏦
+                        <span>
+                            Transferencia
+                        </span>
+                    </button>
+
+                    <button
+                        class="payment-method"
+                        data-method="Mercado Pago QR"
+                    >
+                        ▣
+                        <span>
+                            Mercado Pago QR
+                        </span>
+                    </button>
+
+                    <button
+                        class="payment-method"
+                        data-method="Tarjeta"
+                    >
+                        💳
+                        <span>
+                            Tarjeta
+                        </span>
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="cash-section"
+                    id="cashSection"
+                >
+
+                    <label class="field-label">
+                        Dinero recibido
+                    </label>
+
+                    <input
+                        id="cashReceived"
+                        type="number"
+                        min="0"
+                        placeholder="$ 0"
+                    >
+
+
+                    <div class="change">
+
+                        <span>
+                            Vuelto
+                        </span>
+
+                        <strong id="changeAmount">
+                            $ 0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="charge-button"
+                    id="chargeButton"
+                >
+                    Cobrar $ 0
+                </button>
+
+            </section>
+
+        </section>
+
+
+<!-- =====================================================
+     MODAL - CREAR / EDITAR CLIENTE
+====================================================== -->
+
+<div
+    class="client-modal"
+    id="clientModal"
+    style="display: none;"
+>
+
+    <div class="client-modal-box">
+
+        <div class="client-modal-header">
+            <h3>Nuevo cliente</h3>
+            <button class="client-modal-close" type="button">✕</button>
+        </div>
+
+        <form class="client-form">
+
+            <div class="client-form-field">
+                <label for="clienteTelefono">Teléfono</label>
+                <input
+                    type="tel"
+                    id="clienteTelefono"
+                    name="telefono"
+                    placeholder="Ej: 1123456789"
+                    autofocus
+                >
+            </div>
+
+            <div class="client-form-field">
+                <label for="clienteNombre">Nombre</label>
+                <input
+                    type="text"
+                    id="clienteNombre"
+                    name="nombre"
+                    placeholder="Nombre del cliente"
+                >
+            </div>
+
+            <div class="client-form-field">
+                <label for="clienteDireccion">Dirección</label>
+                <input
+                    type="text"
+                    id="clienteDireccion"
+                    name="direccion"
+                    placeholder="Calle y número"
+                >
+            </div>
+
+        </form>
+
+        <div class="client-modal-actions">
+            <button
+                type="button"
+                class="client-modal-cancel"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="client-modal-save"
+            >
+                Guardar cliente
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL - DETALLE DE PEDIDO
+====================================================== -->
+
+<div
+    class="client-modal"
+    id="orderDetailModal"
+    style="display: none;"
+>
+
+    <div class="client-modal-box">
+
+        <div class="client-modal-header">
+            <h3 id="orderDetailTitulo">Detalle del pedido</h3>
+            <button class="client-modal-close" type="button" id="orderDetailCerrar">✕</button>
+        </div>
+
+        <div class="client-form-body" id="orderDetailBody"></div>
+
+        <div class="client-modal-actions">
+            <button
+                type="button"
+                class="client-modal-save"
+                id="orderDetailCerrar2"
+            >
+                Cerrar
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL - SELECTOR DE VARIEDAD (grupos con mín/máx)
+====================================================== -->
+
+<div
+    class="client-modal"
+    id="variedadModal"
+    style="display: none;"
+>
+
+    <div class="client-modal-box">
+
+        <div class="client-modal-header">
+            <h3 id="variedadModalTitulo">Elegir variedad</h3>
+            <button class="client-modal-close" type="button" id="variedadModalCerrar">✕</button>
+        </div>
+
+        <div class="client-form-body" id="variedadModalBody"></div>
+
+        <div
+            id="variedadModalError"
+            style="
+                display:none;
+                margin: 0 16px 12px;
+                padding: 10px 12px;
+                border: 1px solid rgba(185, 101, 101, .35);
+                border-radius: 8px;
+                background: var(--danger-soft);
+                color: var(--danger);
+                font-size: 12.5px;
+                font-weight: 600;
+            "
+        ></div>
+
+        <div class="client-modal-actions">
+            <button
+                type="button"
+                class="client-modal-cancel"
+                id="variedadModalCancelar"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="client-modal-save"
+                id="variedadModalConfirmar"
+            >
+                Agregar al carrito
+            </button>
+        </div>
+
+    </div>
+
+</div>

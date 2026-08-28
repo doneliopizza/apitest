@@ -1,0 +1,276 @@
+/* =========================================================
+   LOGIN — usa las variables (--background, --panel, --primary,
+   --border, --input, --danger...) ya definidas en ventas.css
+========================================================= */
+
+html,
+body {
+    overflow: auto;
+}
+
+.login-page {
+    width: 100vw;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+
+    background:
+        radial-gradient(
+            circle at 20% 15%,
+            rgba(75, 131, 181, .10),
+            transparent 45%
+        ),
+        var(--background);
+}
+
+
+/* =========================================================
+   TARJETA
+========================================================= */
+
+.login-card {
+    width: 100%;
+    max-width: 380px;
+
+    padding: 34px 32px 28px;
+
+    background: var(--panel);
+
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, .35);
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.login-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    margin-bottom: 26px;
+}
+
+.logo-icon {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 11px;
+
+    background: var(--primary);
+    color: white;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    letter-spacing: .5px;
+}
+
+.login-logo strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: 15px;
+    letter-spacing: .5px;
+}
+
+.login-logo span {
+    display: block;
+
+    margin-top: 2px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.login-header {
+    margin-bottom: 22px;
+}
+
+.login-header h1 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.login-header p {
+    margin: 6px 0 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    color: var(--muted);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+.form-control {
+    width: 100%;
+    height: 44px;
+
+    box-sizing: border-box;
+
+    padding: 0 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: var(--input);
+    color: var(--text);
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease;
+}
+
+.form-control::placeholder {
+    color: #667181;
+}
+
+.form-control:hover {
+    border-color: var(--border-light);
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px rgba(75, 131, 181, .18);
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.login-error {
+    margin-bottom: 14px;
+    padding: 10px 12px;
+
+    border: 1px solid rgba(185, 101, 101, .35);
+    border-radius: 8px;
+
+    background: var(--danger-soft);
+    color: var(--danger);
+
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.login-error.hidden {
+    display: none;
+}
+
+
+/* =========================================================
+   BOTÓN
+========================================================= */
+
+.btn {
+    cursor: pointer;
+}
+
+.login-button {
+    width: 100%;
+    height: 46px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: var(--primary);
+    color: white;
+
+    font-size: 14px;
+    font-weight: 800;
+
+    transition:
+        background .15s ease,
+        transform .08s ease;
+}
+
+.login-button:hover:not(:disabled) {
+    background: var(--primary-dark);
+}
+
+.login-button:active:not(:disabled) {
+    transform: translateY(1px);
+}
+
+.login-button:disabled {
+    opacity: .65;
+    cursor: default;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.login-footer {
+    margin-top: 22px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 11px;
+    letter-spacing: .4px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .login-card {
+        padding: 28px 22px 24px;
+    }
+}

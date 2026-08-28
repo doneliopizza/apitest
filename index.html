@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Light POS</title>
+
+    <!-- Variables, sidebar y estilos base ya viven en ventas.css -->
+    <link rel="stylesheet" href="pages/ventas/ventas.css">
+    <link rel="stylesheet" href="pages/configuracion/configuracion.css">
+    <link rel="stylesheet" href="pages/clientes/clientes.css">
+    <link rel="stylesheet" href="pages/productos/productos.css">
+    <link rel="stylesheet" href="pages/kds/kds.css">
+    <link rel="stylesheet" href="pages/cajas/cajas.css">
+    <link rel="stylesheet" href="css/shell.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <div class="brand">
+
+                <div class="brand-logo">
+                    L
+                </div>
+
+                <div class="brand-text">
+                    <strong>LIGHT POS</strong>
+                    <span>Sistema de gestión</span>
+                </div>
+
+            </div>
+
+            <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                title="Mostrar / ocultar menú"
+            >
+                ☰
+            </button>
+
+            <!-- Se arma dinámicamente desde js/app.js.
+                 El botón de cerrar sesión se agrega al final,
+                 como último ítem de la lista. -->
+            <nav class="menu" id="mainMenu"></nav>
+
+            <div class="connection-status">
+
+                <span class="status-dot"></span>
+
+                <span id="connectionLabel">
+                    POS conectado
+                </span>
+
+            </div>
+
+        </aside>
+
+
+        <!-- =================================================
+             CONTENIDO PRINCIPAL — sin topbar, la vista
+             activa ocupa todo el alto disponible
+        ================================================== -->
+
+        <main class="main">
+
+            <div class="view-root" id="viewRoot">
+                <div class="view-loading">Cargando…</div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Botón flotante, solo visible en mobile, para abrir/cerrar
+         la sidebar sin robarle espacio al layout -->
+    <button
+        class="btn-menu-floating"
+        id="btnMenuMobile"
+        title="Menú"
+    >
+        ☰
+    </button>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="config.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
