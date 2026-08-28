@@ -1,0 +1,165 @@
+<section class="reportes-page">
+
+    <div class="reportes-header">
+        <span class="eyebrow">ANÁLISIS</span>
+        <h2>Reportes</h2>
+    </div>
+
+    <!-- =================================================
+         SELECTOR DE RANGO DE FECHAS (global, arriba de todo)
+    ================================================== -->
+
+    <div class="reportes-rango">
+
+        <div class="reportes-rango-rapidos" id="rangoRapidos">
+            <button type="button" class="rango-btn active" data-rango="hoy">Hoy</button>
+            <button type="button" class="rango-btn" data-rango="ayer">Ayer</button>
+            <button type="button" class="rango-btn" data-rango="semana">Esta semana</button>
+            <button type="button" class="rango-btn" data-rango="mes">Este mes</button>
+            <button type="button" class="rango-btn" data-rango="anio">Este año</button>
+        </div>
+
+        <div class="reportes-rango-custom">
+            <input type="date" id="rangoDesde">
+            <span>—</span>
+            <input type="date" id="rangoHasta">
+        </div>
+
+    </div>
+
+    <!-- =================================================
+         TABS
+    ================================================== -->
+
+    <div class="reportes-tabs" id="reportesTabs">
+        <button type="button" class="ptab active" data-rtab="resumen">Resumen</button>
+        <button type="button" class="ptab" data-rtab="ventas">Ventas</button>
+        <button type="button" class="ptab" data-rtab="gastos">Gastos</button>
+        <button type="button" class="ptab" data-rtab="segmentos">Segmentos</button>
+    </div>
+
+
+    <!-- =================================================
+         TAB: RESUMEN
+    ================================================== -->
+
+    <div class="rtab-panel" id="rtabResumen">
+
+        <div class="reportes-cards" id="reportesCards"></div>
+
+        <div class="reportes-grid">
+
+            <div class="reportes-panel reportes-panel-ancho">
+
+                <div class="reportes-panel-header">
+                    <span class="eyebrow">VENTAS POR DÍA</span>
+                    <strong id="reporteTotalRango">$ 0</strong>
+                </div>
+
+                <div id="reporteGraficoVentas" class="reporte-grafico"></div>
+
+            </div>
+
+            <div class="reportes-panel">
+
+                <div class="reportes-panel-header">
+                    <span class="eyebrow">MÁS VENDIDOS</span>
+                </div>
+
+                <div id="reporteTopProductos" class="reporte-top-lista"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TAB: VENTAS (tabla)
+    ================================================== -->
+
+    <div class="rtab-panel" id="rtabVentas" style="display:none;">
+
+        <div class="reportes-tabla-resumen" id="ventasResumenBar"></div>
+
+        <div class="reportes-tabla-wrap">
+            <table class="reportes-tabla">
+                <thead>
+                    <tr>
+                        <th>Pedido</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th>Medio de pago</th>
+                        <th>Entrega</th>
+                        <th>Estado</th>
+                        <th style="text-align:right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="ventasTablaBody"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TAB: GASTOS (tabla)
+    ================================================== -->
+
+    <div class="rtab-panel" id="rtabGastos" style="display:none;">
+
+        <div class="reportes-tabla-resumen" id="gastosResumenBar"></div>
+
+        <div class="reportes-tabla-wrap">
+            <table class="reportes-tabla">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Detalle</th>
+                        <th>Usuario</th>
+                        <th style="text-align:right;">Monto</th>
+                    </tr>
+                </thead>
+                <tbody id="gastosTablaBody"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TAB: SEGMENTOS
+    ================================================== -->
+
+    <div class="rtab-panel" id="rtabSegmentos" style="display:none;">
+
+        <div class="reportes-segmentos-grid">
+
+            <div class="reportes-panel">
+                <div class="reportes-panel-header">
+                    <span class="eyebrow">POR MEDIO DE PAGO</span>
+                </div>
+                <div id="segMedioPago" class="reporte-top-lista"></div>
+            </div>
+
+            <div class="reportes-panel">
+                <div class="reportes-panel-header">
+                    <span class="eyebrow">POR TIPO DE ENTREGA</span>
+                </div>
+                <div id="segTipoEntrega" class="reporte-top-lista"></div>
+            </div>
+
+            <div class="reportes-panel">
+                <div class="reportes-panel-header">
+                    <span class="eyebrow">POR RUBRO</span>
+                </div>
+                <div id="segRubro" class="reporte-top-lista"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

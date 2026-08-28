@@ -1,0 +1,12 @@
+================================================================
+Agregar en main.py (si todavía no está)
+================================================================
+
+Import, junto a los demás:
+
+from api.routers.reportes import router as reportes_router
+
+
+Y junto a los demás include_router:
+
+app.include_router(reportes_router)
