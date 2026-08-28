@@ -1,1 +1,1 @@
-window.LIGHTPOS_API_URL = "https://dev-api.doneliopizzeria.com.ar";
+window.LIGHTPOS_API_URL = "https://lightpos-api.doneliopizzeria.com.ar";
