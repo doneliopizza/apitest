@@ -399,3 +399,50 @@
         justify-content: space-between;
     }
 }
+
+
+/* =========================================================
+   TOOLBAR DE VENTAS (filtro + facturar)
+========================================================= */
+
+.ventas-tabla-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.ventas-tabla-acciones {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ventas-tabla-acciones select {
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--input);
+    color: var(--text);
+    font-size: 12px;
+}
+
+#btnFacturarSeleccionados {
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 7px;
+    font-size: 12px;
+}
+
+#btnFacturarSeleccionados:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.reportes-tabla input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+}

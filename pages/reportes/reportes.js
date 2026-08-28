@@ -358,8 +358,11 @@ function renderTopProductos(datos) {
 
 
 /* =========================================================
-   TABLA DE VENTAS
+   TABLA DE VENTAS (con selección para facturar)
    ========================================================= */
+
+let ventasCache = [];
+let estadosFacturas = {};
 
 async function cargarVentas() {
 
@@ -367,37 +370,206 @@ async function cargarVentas() {
 
         const data = await api(`/reportes/ventas?desde=${rangoDesde}&hasta=${rangoHasta}`);
 
+        ventasCache = data.pedidos;
+
         renderResumenBar("ventasResumenBar", [
             { label: "Pedidos", valor: data.resumen.cantidad },
             { label: "Total", valor: money(data.resumen.total) },
             { label: "Promedio", valor: money(data.resumen.promedio) },
         ]);
 
-        const tbody = document.getElementById("ventasTablaBody");
+        poblarFiltroMedioPago(data.pedidos);
 
-        if (!data.pedidos.length) {
+        await cargarEstadosFacturas(data.pedidos.map(p => p.id));
 
-            tbody.innerHTML = `<tr><td colspan="7" class="reportes-tabla-vacio">Sin ventas en este rango.</td></tr>`;
+        renderTablaVentas();
 
-            return;
-        }
+    } catch (error) {
 
-        tbody.innerHTML = data.pedidos.map(p => `
+        console.error("ERROR CARGANDO VENTAS:", error);
+    }
+}
+
+function poblarFiltroMedioPago(pedidos) {
+
+    const select = document.getElementById("filtroMedioPago");
+
+    const actual = select.value;
+
+    const medios = [...new Set(pedidos.map(p => p.medio_pago))].filter(Boolean);
+
+    select.innerHTML = `<option value="">Todos los medios de pago</option>` +
+        medios.map(m => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join("");
+
+    if (medios.includes(actual)) {
+        select.value = actual;
+    }
+}
+
+function renderTablaVentas() {
+
+    const filtroMedio = document.getElementById("filtroMedioPago").value;
+
+    const filtrados = filtroMedio
+        ? ventasCache.filter(p => p.medio_pago === filtroMedio)
+        : ventasCache;
+
+    const tbody = document.getElementById("ventasTablaBody");
+
+    if (!filtrados.length) {
+
+        tbody.innerHTML = `<tr><td colspan="9" class="reportes-tabla-vacio">Sin ventas en este rango.</td></tr>`;
+
+        actualizarContadorSeleccionados();
+
+        return;
+    }
+
+    tbody.innerHTML = filtrados.map(p => {
+
+        const factura = estadosFacturas[String(p.id)];
+
+        const facturaTexto = factura?.estado === "EMITIDA"
+            ? `<span style="color:var(--success); font-weight:700;">CAE ${escapeHtml(factura.cae)}</span>`
+            : factura?.estado === "ERROR"
+                ? `<span style="color:var(--danger); font-weight:700;">Error</span>`
+                : `<span class="muted" style="color:var(--muted);">—</span>`;
+
+        const yaFacturado = factura?.estado === "EMITIDA";
+
+        return `
             <tr>
+                <td>
+                    <input
+                        type="checkbox"
+                        class="check-venta"
+                        data-pedido-id="${p.id}"
+                        ${yaFacturado ? "disabled" : ""}
+                    >
+                </td>
                 <td>#${escapeHtml(p.id)}</td>
                 <td>${new Date(p.fecha).toLocaleString("es-AR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" })}</td>
                 <td>${escapeHtml(p.cliente)}</td>
                 <td>${escapeHtml(p.medio_pago)}</td>
                 <td>${escapeHtml(p.tipo_entrega)}</td>
                 <td>${escapeHtml(p.estado)}</td>
+                <td>${facturaTexto}</td>
                 <td>${money(p.total)}</td>
             </tr>
-        `).join("");
+        `;
+    }).join("");
+
+    document.querySelectorAll(".check-venta").forEach(chk => {
+        chk.addEventListener("change", actualizarContadorSeleccionados);
+    });
+
+    actualizarContadorSeleccionados();
+}
+
+function actualizarContadorSeleccionados() {
+
+    const marcados = document.querySelectorAll(".check-venta:checked");
+
+    document.getElementById("cantidadSeleccionados").textContent = marcados.length;
+
+    document.getElementById("btnFacturarSeleccionados").disabled = marcados.length === 0;
+}
+
+async function cargarEstadosFacturas(pedidoIds) {
+
+    if (!pedidoIds.length) {
+        estadosFacturas = {};
+        return;
+    }
+
+    try {
+
+        const respuesta = await fetch(`${API_URL}/facturacion/estados`, {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ pedido_ids: pedidoIds })
+        });
+
+        if (respuesta.ok) {
+            estadosFacturas = await respuesta.json();
+        }
 
     } catch (error) {
 
-        console.error("ERROR CARGANDO VENTAS:", error);
+        console.error("ERROR CARGANDO ESTADOS DE FACTURAS:", error);
     }
+}
+
+async function facturarSeleccionados() {
+
+    const marcados = [...document.querySelectorAll(".check-venta:checked")]
+        .map(chk => Number(chk.dataset.pedidoId));
+
+    if (!marcados.length) return;
+
+    if (!confirm(`¿Facturar ${marcados.length} pedido(s) en ARCA? Esta acción no se puede deshacer.`)) {
+        return;
+    }
+
+    const boton = document.getElementById("btnFacturarSeleccionados");
+
+    boton.disabled = true;
+    boton.textContent = "Facturando...";
+
+    try {
+
+        const respuesta = await fetch(`${API_URL}/facturacion/facturar`, {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ pedido_ids: marcados })
+        });
+
+        const data = await respuesta.json();
+
+        const exitosos = data.resultados.filter(r => r.ok).length;
+        const fallidos = data.resultados.filter(r => !r.ok);
+
+        let mensaje = `${exitosos} factura(s) emitida(s) correctamente.`;
+
+        if (fallidos.length) {
+
+            mensaje += `\n\n${fallidos.length} con error:\n` +
+                fallidos.map(f => `Pedido #${f.pedido_id}: ${f.error}`).join("\n");
+        }
+
+        alert(mensaje);
+
+        await cargarEstadosFacturas(marcados);
+
+        renderTablaVentas();
+
+    } catch (error) {
+
+        console.error("ERROR FACTURANDO:", error);
+
+        alert("No se pudo completar la facturación: " + error.message);
+
+    } finally {
+
+        boton.textContent = `Facturar seleccionados (0)`;
+        actualizarContadorSeleccionados();
+    }
+}
+
+function inicializarVentasToolbar() {
+
+    document.getElementById("filtroMedioPago").addEventListener("change", renderTablaVentas);
+
+    document.getElementById("checkTodos").addEventListener("change", event => {
+
+        document.querySelectorAll(".check-venta:not(:disabled)").forEach(chk => {
+            chk.checked = event.target.checked;
+        });
+
+        actualizarContadorSeleccionados();
+    });
+
+    document.getElementById("btnFacturarSeleccionados").addEventListener("click", facturarSeleccionados);
 }
 
 
@@ -509,6 +681,7 @@ async function inicializar() {
 
     inicializarRango();
     inicializarTabs();
+    inicializarVentasToolbar();
 
     await cargarResumen();
 }

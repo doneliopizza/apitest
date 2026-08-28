@@ -81,18 +81,38 @@
 
     <div class="rtab-panel" id="rtabVentas" style="display:none;">
 
-        <div class="reportes-tabla-resumen" id="ventasResumenBar"></div>
+        <div class="ventas-tabla-toolbar">
+
+            <div class="reportes-tabla-resumen" id="ventasResumenBar"></div>
+
+            <div class="ventas-tabla-acciones">
+
+                <select id="filtroMedioPago">
+                    <option value="">Todos los medios de pago</option>
+                </select>
+
+                <button type="button" class="btn-primario" id="btnFacturarSeleccionados" disabled>
+                    Facturar seleccionados (<span id="cantidadSeleccionados">0</span>)
+                </button>
+
+            </div>
+
+        </div>
 
         <div class="reportes-tabla-wrap">
             <table class="reportes-tabla">
                 <thead>
                     <tr>
+                        <th style="width:30px;">
+                            <input type="checkbox" id="checkTodos">
+                        </th>
                         <th>Pedido</th>
                         <th>Fecha</th>
                         <th>Cliente</th>
                         <th>Medio de pago</th>
                         <th>Entrega</th>
                         <th>Estado</th>
+                        <th>Factura</th>
                         <th style="text-align:right;">Total</th>
                     </tr>
                 </thead>
