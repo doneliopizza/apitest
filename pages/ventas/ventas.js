@@ -437,8 +437,8 @@ function mostrarResultadosClientes(resultados) {
                         </strong>
 
                         <span>
-                            Teléfono:
-                            ${escapeHtml(cliente.telefono || "-")}
+                            Dirección:
+                            ${escapeHtml(cliente.domicilio_fiscal || "-")}
                         </span>
 
                         <span>
