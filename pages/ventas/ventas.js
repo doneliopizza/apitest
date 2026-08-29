@@ -5460,6 +5460,7 @@ function mostrarBloqueoCajaCerrada() {
 
 let intervaloPendientesCarta = null;
 let idsPendientesCartaVistos = null;
+let pendientesCartaReconocido = false;
 
 function sonarAvisoPedidoWeb() {
 
@@ -5585,7 +5586,9 @@ async function cargarPendientesCarta() {
         const pendientes = await respuesta.json();
 
         // -----------------------------------------------------
-        // DETECTAR PEDIDOS NUEVOS (sonido + aviso)
+        // DETECTAR PEDIDOS NUEVOS -> reactivan la alerta
+        // (incluso si ya la habías "silenciado" abriendo el
+        // panel antes)
         // -----------------------------------------------------
 
         if (idsPendientesCartaVistos !== null) {
@@ -5596,16 +5599,34 @@ async function cargarPendientesCarta() {
 
             if (nuevos.length > 0) {
 
-                sonarAvisoPedidoWeb();
+                pendientesCartaReconocido = false;
 
                 nuevos.forEach(p => {
 
                     mostrarAvisoPedidoWeb(p);
                 });
             }
+
+        } else if (pendientes.length > 0) {
+
+            // Primera carga (recién entraste a Ventas) y ya
+            // hay pedidos esperando de antes — también avisa,
+            // no solo a los "nuevos desde que abriste".
+
+            pendientesCartaReconocido = false;
         }
 
         idsPendientesCartaVistos = new Set(pendientes.map(p => p.id));
+
+        // -----------------------------------------------------
+        // SONIDO PERSISTENTE — suena en cada consulta (cada 15s)
+        // mientras haya algo sin atender y no lo hayas "visto"
+        // -----------------------------------------------------
+
+        if (pendientes.length > 0 && !pendientesCartaReconocido) {
+
+            sonarAvisoPedidoWeb();
+        }
 
         const badge = document.getElementById("pendientesCartaBadge");
 
@@ -5752,6 +5773,8 @@ function inicializarPendientesCarta() {
         boton.addEventListener("click", () => {
 
             if (modal) modal.style.display = "flex";
+
+            pendientesCartaReconocido = true;
 
             renderPendientesCarta(window._pendientesCartaCache || []);
         });
