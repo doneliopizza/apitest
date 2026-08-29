@@ -551,7 +551,8 @@ async function facturarSeleccionados() {
 
     } finally {
 
-        boton.textContent = `Facturar seleccionados (0)`;
+        boton.innerHTML = `Facturar seleccionados (<span id="cantidadSeleccionados">0</span>)`;
+
         actualizarContadorSeleccionados();
     }
 }
