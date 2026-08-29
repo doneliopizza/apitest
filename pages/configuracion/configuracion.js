@@ -187,8 +187,6 @@ function renderAgentes() {
         .map(agente => renderAgenteCard(agente))
         .join("");
 
-    // Selects de rol
-
     container
         .querySelectorAll("select[data-rol]")
         .forEach(select => {
@@ -211,8 +209,6 @@ function renderAgentes() {
             );
         });
 
-    // Botones "Probar" (impresora puntual)
-
     container
         .querySelectorAll("[data-probar]")
         .forEach(button => {
@@ -227,8 +223,6 @@ function renderAgentes() {
                 }
             );
         });
-
-    // Botones "Probar" (rol / predeterminada)
 
     container
         .querySelectorAll("[data-probar-rol]")
@@ -248,8 +242,6 @@ function renderAgentes() {
                 }
             );
         });
-
-    // Botones "Activar / Desactivar"
 
     container
         .querySelectorAll("[data-toggle]")
@@ -633,10 +625,169 @@ async function probarImpresora(impresoraId) {
 
 
 /* =========================================================
+   HORARIOS DE ATENCIÓN
+   ========================================================= */
+
+const DIAS_SEMANA = [
+    "Domingo", "Lunes", "Martes", "Miércoles",
+    "Jueves", "Viernes", "Sábado"
+];
+
+async function cargarHorarios() {
+
+    try {
+
+        const respuesta = await fetch(`${API_URL}/horarios`, {
+            method: "GET",
+            headers: authHeaders()
+        });
+
+        if (!respuesta.ok) {
+
+            if (manejarErrorAuth(respuesta.status)) return;
+
+            throw new Error(`HTTP ${respuesta.status}`);
+        }
+
+        const dias = await respuesta.json();
+
+        renderHorarios(dias);
+
+    } catch (error) {
+
+        console.error("ERROR CARGANDO HORARIOS:", error);
+
+        showToast("No se pudieron cargar los horarios");
+    }
+}
+
+function renderHorarios(dias) {
+
+    const container = document.getElementById("horariosLista");
+
+    if (!container) return;
+
+    container.innerHTML = dias.map(d => `
+        <div class="horario-dia-row" data-dia="${d.dia_semana}">
+
+            <span class="horario-dia-nombre">${DIAS_SEMANA[d.dia_semana]}</span>
+
+            <label>
+                <input type="checkbox" data-cerrado ${d.cerrado ? "checked" : ""}>
+                Cerrado
+            </label>
+
+            <input
+                type="time"
+                data-apertura
+                value="${d.hora_apertura || ""}"
+                ${d.cerrado ? "disabled" : ""}
+            >
+
+            <input
+                type="time"
+                data-cierre
+                value="${d.hora_cierre || ""}"
+                ${d.cerrado ? "disabled" : ""}
+            >
+
+        </div>
+    `).join("");
+
+    container.querySelectorAll("[data-cerrado]").forEach(chk => {
+
+        chk.addEventListener("change", () => {
+
+            const fila = chk.closest(".horario-dia-row");
+
+            fila.querySelector("[data-apertura]").disabled = chk.checked;
+            fila.querySelector("[data-cierre]").disabled = chk.checked;
+        });
+    });
+}
+
+async function guardarHorarios() {
+
+    const filas = document.querySelectorAll(".horario-dia-row");
+
+    const dias = [...filas].map(fila => ({
+        dia_semana: Number(fila.dataset.dia),
+        cerrado: fila.querySelector("[data-cerrado]").checked,
+        hora_apertura: fila.querySelector("[data-apertura]").value || null,
+        hora_cierre: fila.querySelector("[data-cierre]").value || null,
+    }));
+
+    try {
+
+        const respuesta = await fetch(`${API_URL}/horarios`, {
+            method: "PUT",
+            headers: authHeaders(),
+            body: JSON.stringify({ dias })
+        });
+
+        if (!respuesta.ok) {
+
+            if (manejarErrorAuth(respuesta.status)) return;
+
+            throw new Error(`HTTP ${respuesta.status}`);
+        }
+
+        showToast("Horarios guardados");
+
+    } catch (error) {
+
+        console.error("ERROR GUARDANDO HORARIOS:", error);
+
+        showToast("No se pudieron guardar los horarios");
+    }
+}
+
+function inicializarHorarios() {
+
+    const boton = document.getElementById("btnGuardarHorarios");
+
+    if (boton) {
+        boton.addEventListener("click", guardarHorarios);
+    }
+
+    cargarHorarios();
+}
+
+
+/* =========================================================
+   TABS (Impresoras / Horarios)
+   ========================================================= */
+
+function inicializarTabsConfig() {
+
+    document.querySelectorAll("[data-ctab]").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+            document.querySelectorAll("[data-ctab]").forEach(b => {
+                b.classList.toggle("active", b === btn);
+            });
+
+            const tab = btn.dataset.ctab;
+
+            const panelImpresoras = document.getElementById("ctabImpresoras");
+            const panelHorarios = document.getElementById("ctabHorarios");
+
+            if (panelImpresoras) panelImpresoras.style.display = tab === "impresoras" ? "block" : "none";
+            if (panelHorarios) panelHorarios.style.display = tab === "horarios" ? "block" : "none";
+        });
+    });
+}
+
+
+/* =========================================================
    INICIALIZACIÓN / DESTRUCCIÓN (llamado por el shell)
    ========================================================= */
 
 async function inicializar() {
+
+    inicializarTabsConfig();
+    inicializarHorarios();
 
     await cargarAgentes();
 

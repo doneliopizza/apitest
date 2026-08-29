@@ -7,20 +7,54 @@
         </span>
 
         <h2>
-            Impresoras
+            Configuración
         </h2>
 
-        <p>
+    </div>
+
+    <div class="config-tabs">
+        <button type="button" class="ptab active" data-ctab="impresoras">Impresoras</button>
+        <button type="button" class="ptab" data-ctab="horarios">Horarios</button>
+    </div>
+
+
+    <!-- =====================================================
+         TAB: IMPRESORAS
+    ====================================================== -->
+
+    <div class="ctab-panel" id="ctabImpresoras">
+
+        <p class="config-subtexto">
             Elegí qué impresora usa cada PC para tickets
             y para comandas de cocina. Los agentes detectan
             sus impresoras solos — acá solo elegís cuál usar.
         </p>
 
+        <div
+            id="agentesList"
+            class="agentes-list"
+        ></div>
+
     </div>
 
-    <div
-        id="agentesList"
-        class="agentes-list"
-    ></div>
+
+    <!-- =====================================================
+         TAB: HORARIOS
+    ====================================================== -->
+
+    <div class="ctab-panel" id="ctabHorarios" style="display:none;">
+
+        <p class="config-subtexto">
+            Mientras tu local esté cerrado según estos horarios,
+            la carta digital no va a dejar hacer pedidos nuevos.
+        </p>
+
+        <div id="horariosLista" class="horarios-lista"></div>
+
+        <button type="button" class="btn-primario" id="btnGuardarHorarios">
+            Guardar horarios
+        </button>
+
+    </div>
 
 </section>
