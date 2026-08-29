@@ -1625,6 +1625,47 @@ function confirmarSelectorVariedad() {
    CAMBIAR CANTIDAD
    ========================================================= */
 
+function editarItemCarrito(cartLineId) {
+
+    const item = carrito.find(
+        producto => Number(producto.cartLineId) === Number(cartLineId)
+    );
+
+    if (!item) return;
+
+    const nuevoNombre = prompt("Nombre del producto:", item.nombre);
+
+    if (nuevoNombre === null) return; // canceló
+
+    if (!nuevoNombre.trim()) {
+        showToast("El nombre no puede quedar vacío");
+        return;
+    }
+
+    const nuevoPrecioTexto = prompt(
+        "Precio unitario:",
+        String(Number(item.precio || 0))
+    );
+
+    if (nuevoPrecioTexto === null) return; // canceló
+
+    const nuevoPrecio = Number(
+        String(nuevoPrecioTexto).replace(",", ".")
+    );
+
+    if (!Number.isFinite(nuevoPrecio) || nuevoPrecio < 0) {
+        showToast("Precio inválido");
+        return;
+    }
+
+    item.nombre = nuevoNombre.trim();
+    item.precio = nuevoPrecio;
+    item.editadoManualmente = true;
+
+    renderCart();
+}
+
+
 function changeQuantity(cartLineId, delta) {
 
     const item =
@@ -1739,6 +1780,14 @@ function renderCart() {
 
                                 <span class="cart-price">
                                     ${money(precio)} c/u
+                                    <button
+                                        type="button"
+                                        class="cart-item-editar"
+                                        data-editar-item="${item.cartLineId}"
+                                        title="Editar nombre o precio"
+                                    >
+                                        ✏️
+                                    </button>
                                 </span>
 
                             </div>
@@ -1785,6 +1834,23 @@ function renderCart() {
                 `;
             })
             .join("");
+
+    cart
+        .querySelectorAll("[data-editar-item]")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    event.stopPropagation();
+
+                    editarItemCarrito(
+                        Number(button.dataset.editarItem)
+                    );
+                }
+            );
+        });
 
     cart
         .querySelectorAll("[data-minus]")
@@ -5387,6 +5453,92 @@ function mostrarBloqueoCajaCerrada() {
    ========================================================= */
 
 let intervaloPendientesCarta = null;
+let idsPendientesCartaVistos = null;
+
+function sonarAvisoPedidoWeb() {
+
+    try {
+
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // 2 "beeps" cortos, sin necesitar ningún archivo de audio
+
+        [0, 0.22].forEach(delay => {
+
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+
+            osc.type = "sine";
+            osc.frequency.value = 880;
+
+            gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
+            gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + delay + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.18);
+
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+
+            osc.start(ctx.currentTime + delay);
+            osc.stop(ctx.currentTime + delay + 0.2);
+        });
+
+    } catch (error) {
+
+        console.warn("No se pudo reproducir el sonido de aviso:", error);
+    }
+}
+
+function mostrarAvisoPedidoWeb(pedido) {
+
+    const contenedor = document.getElementById("avisosPedidoWebContenedor")
+        || crearContenedorAvisosPedidoWeb();
+
+    const aviso = document.createElement("div");
+
+    aviso.className = "aviso-pedido-web";
+
+    aviso.innerHTML = `
+        <div class="aviso-pedido-web-icono">🌐</div>
+        <div class="aviso-pedido-web-texto">
+            <strong>Nuevo pedido web — #${escapeHtml(pedido.id)}</strong>
+            <span>${escapeHtml(pedido.cliente_nombre || "Sin nombre")} · ${money(pedido.total)}</span>
+        </div>
+        <button type="button" class="aviso-pedido-web-cerrar">✕</button>
+    `;
+
+    aviso.querySelector(".aviso-pedido-web-cerrar").addEventListener("click", () => {
+        aviso.remove();
+    });
+
+    aviso.addEventListener("click", event => {
+
+        if (event.target.closest(".aviso-pedido-web-cerrar")) return;
+
+        aviso.remove();
+
+        const boton = document.getElementById("pendientesCartaButton");
+
+        if (boton) boton.click();
+    });
+
+    contenedor.appendChild(aviso);
+
+    setTimeout(() => {
+        aviso.remove();
+    }, 12000);
+}
+
+function crearContenedorAvisosPedidoWeb() {
+
+    const contenedor = document.createElement("div");
+
+    contenedor.id = "avisosPedidoWebContenedor";
+    contenedor.className = "avisos-pedido-web-contenedor";
+
+    document.body.appendChild(contenedor);
+
+    return contenedor;
+}
 
 async function cargarPendientesCarta() {
 
@@ -5405,6 +5557,29 @@ async function cargarPendientesCarta() {
         }
 
         const pendientes = await respuesta.json();
+
+        // -----------------------------------------------------
+        // DETECTAR PEDIDOS NUEVOS (sonido + aviso)
+        // -----------------------------------------------------
+
+        if (idsPendientesCartaVistos !== null) {
+
+            const nuevos = pendientes.filter(
+                p => !idsPendientesCartaVistos.has(p.id)
+            );
+
+            if (nuevos.length > 0) {
+
+                sonarAvisoPedidoWeb();
+
+                nuevos.forEach(p => {
+
+                    mostrarAvisoPedidoWeb(p);
+                });
+            }
+        }
+
+        idsPendientesCartaVistos = new Set(pendientes.map(p => p.id));
 
         const badge = document.getElementById("pendientesCartaBadge");
 
