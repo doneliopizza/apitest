@@ -470,9 +470,16 @@ function actualizarContadorSeleccionados() {
 
     const marcados = document.querySelectorAll(".check-venta:checked");
 
-    document.getElementById("cantidadSeleccionados").textContent = marcados.length;
+    const contador = document.getElementById("cantidadSeleccionados");
+    const boton = document.getElementById("btnFacturarSeleccionados");
 
-    document.getElementById("btnFacturarSeleccionados").disabled = marcados.length === 0;
+    if (contador) {
+        contador.textContent = marcados.length;
+    }
+
+    if (boton) {
+        boton.disabled = marcados.length === 0;
+    }
 }
 
 async function cargarEstadosFacturas(pedidoIds) {
