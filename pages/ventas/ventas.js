@@ -2762,6 +2762,9 @@ async function procesarPedido() {
                     nombre_producto:
                         item.nombre || null,
 
+                    precio_manual:
+                        Boolean(item.editadoManualmente),
+
                     opciones:
                         Array.isArray(item.opciones)
                             ? item.opciones.map(o => ({
