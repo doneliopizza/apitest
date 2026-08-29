@@ -2136,11 +2136,23 @@ button {
     display: grid;
 
     grid-template-columns:
-        repeat(3, 1fr);
+        repeat(2, 1fr);
 
     gap: 6px;
 
     padding: 0 13px;
+}
+
+.payment-method {
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 4px;
+    text-align: center;
+}
+
+.payment-method span {
+    font-size: 10px;
+    line-height: 1.2;
 }
 
 .payment-method {
