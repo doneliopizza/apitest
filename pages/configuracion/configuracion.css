@@ -330,57 +330,97 @@
 
 
 /* =========================================================
-   HORARIOS
+   HORARIOS — varios turnos por día
 ========================================================= */
 
 .horarios-lista {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
     margin: 0 0 16px;
     max-width: 700px;
 }
 
-.horario-dia-row {
-    display: grid;
-    grid-template-columns: 110px auto 1fr 1fr;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 12px;
+.horario-dia-bloque {
+    padding: 12px 14px;
     background: var(--panel-soft);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 9px;
 }
 
-.horario-dia-nombre {
+.horario-dia-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
     color: var(--text);
-    font-size: 12.5px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.horario-cerrado-tag {
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--danger-soft);
+    color: var(--danger);
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.horario-turnos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.horario-turno-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 10px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text);
+}
+
+.horario-turno-row button {
+    border: 0;
+    background: transparent;
+    color: var(--danger);
+    font-size: 13px;
     font-weight: 700;
 }
 
-.horario-dia-row label {
+.horario-turno-nuevo {
     display: flex;
     align-items: center;
     gap: 6px;
-    color: var(--muted);
-    font-size: 11px;
-    white-space: nowrap;
+    flex-wrap: wrap;
 }
 
-.horario-dia-row input[type="time"] {
-    height: 34px;
+.horario-turno-nuevo span {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.horario-turno-nuevo input[type="time"] {
+    height: 32px;
     padding: 0 8px;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--input);
     color: var(--text);
     font-size: 12px;
-    width: 100%;
     color-scheme: dark;
 }
 
-.horario-dia-row input[type="time"]:disabled {
-    opacity: .4;
+.horario-turno-nuevo button {
+    height: 32px;
+    font-size: 11px;
 }
 
 
@@ -390,8 +430,12 @@
 
 @media (max-width: 700px) {
 
-    .horario-dia-row {
-        grid-template-columns: 1fr;
+    .horario-turno-nuevo {
+        width: 100%;
+    }
+
+    .horario-turno-nuevo input[type="time"] {
+        flex: 1;
     }
 }
 

@@ -625,7 +625,7 @@ async function probarImpresora(impresoraId) {
 
 
 /* =========================================================
-   HORARIOS DE ATENCIÓN
+   HORARIOS DE ATENCIÓN — varios turnos por día
    ========================================================= */
 
 const DIAS_SEMANA = [
@@ -667,62 +667,76 @@ function renderHorarios(dias) {
 
     if (!container) return;
 
-    container.innerHTML = dias.map(d => `
-        <div class="horario-dia-row" data-dia="${d.dia_semana}">
+    container.innerHTML = dias.map(dia => `
 
-            <span class="horario-dia-nombre">${DIAS_SEMANA[d.dia_semana]}</span>
+        <div class="horario-dia-bloque" data-dia="${dia.dia_semana}">
 
-            <label>
-                <input type="checkbox" data-cerrado ${d.cerrado ? "checked" : ""}>
-                Cerrado
-            </label>
+            <div class="horario-dia-titulo">
+                ${DIAS_SEMANA[dia.dia_semana]}
+                ${!dia.turnos.length ? '<span class="horario-cerrado-tag">Cerrado</span>' : ""}
+            </div>
 
-            <input
-                type="time"
-                data-apertura
-                value="${d.hora_apertura || ""}"
-                ${d.cerrado ? "disabled" : ""}
-            >
+            <div class="horario-turnos-lista">
 
-            <input
-                type="time"
-                data-cierre
-                value="${d.hora_cierre || ""}"
-                ${d.cerrado ? "disabled" : ""}
-            >
+                ${dia.turnos.map(t => `
+                    <div class="horario-turno-row" data-turno="${t.id}">
+                        <span>${t.hora_apertura} — ${t.hora_cierre}</span>
+                        <button type="button" data-borrar-turno="${t.id}">✕</button>
+                    </div>
+                `).join("")}
+
+            </div>
+
+            <div class="horario-turno-nuevo">
+                <input type="time" class="horario-nuevo-apertura">
+                <span>a</span>
+                <input type="time" class="horario-nuevo-cierre">
+                <button type="button" class="btn-secundario" data-agregar-turno="${dia.dia_semana}">
+                    + Agregar turno
+                </button>
+            </div>
 
         </div>
     `).join("");
 
-    container.querySelectorAll("[data-cerrado]").forEach(chk => {
+    container.querySelectorAll("[data-borrar-turno]").forEach(btn => {
 
-        chk.addEventListener("change", () => {
+        btn.addEventListener("click", () => borrarTurno(btn.dataset.borrarTurno));
+    });
 
-            const fila = chk.closest(".horario-dia-row");
+    container.querySelectorAll("[data-agregar-turno]").forEach(btn => {
 
-            fila.querySelector("[data-apertura]").disabled = chk.checked;
-            fila.querySelector("[data-cierre]").disabled = chk.checked;
+        btn.addEventListener("click", () => {
+
+            const bloque = btn.closest(".horario-dia-bloque");
+
+            const apertura = bloque.querySelector(".horario-nuevo-apertura").value;
+            const cierre = bloque.querySelector(".horario-nuevo-cierre").value;
+
+            agregarTurno(Number(btn.dataset.agregarTurno), apertura, cierre);
         });
     });
 }
 
-async function guardarHorarios() {
+async function agregarTurno(diaSemana, horaApertura, horaCierre) {
 
-    const filas = document.querySelectorAll(".horario-dia-row");
+    if (!horaApertura || !horaCierre) {
 
-    const dias = [...filas].map(fila => ({
-        dia_semana: Number(fila.dataset.dia),
-        cerrado: fila.querySelector("[data-cerrado]").checked,
-        hora_apertura: fila.querySelector("[data-apertura]").value || null,
-        hora_cierre: fila.querySelector("[data-cierre]").value || null,
-    }));
+        showToast("Completá los dos horarios del turno");
+
+        return;
+    }
 
     try {
 
-        const respuesta = await fetch(`${API_URL}/horarios`, {
-            method: "PUT",
+        const respuesta = await fetch(`${API_URL}/horarios/turno`, {
+            method: "POST",
             headers: authHeaders(),
-            body: JSON.stringify({ dias })
+            body: JSON.stringify({
+                dia_semana: diaSemana,
+                hora_apertura: horaApertura,
+                hora_cierre: horaCierre
+            })
         });
 
         if (!respuesta.ok) {
@@ -732,23 +746,47 @@ async function guardarHorarios() {
             throw new Error(`HTTP ${respuesta.status}`);
         }
 
-        showToast("Horarios guardados");
+        showToast("Turno agregado");
+
+        await cargarHorarios();
 
     } catch (error) {
 
-        console.error("ERROR GUARDANDO HORARIOS:", error);
+        console.error("ERROR AGREGANDO TURNO:", error);
 
-        showToast("No se pudieron guardar los horarios");
+        showToast("No se pudo agregar el turno");
+    }
+}
+
+async function borrarTurno(turnoId) {
+
+    try {
+
+        const respuesta = await fetch(`${API_URL}/horarios/turno/${turnoId}`, {
+            method: "DELETE",
+            headers: authHeaders()
+        });
+
+        if (!respuesta.ok) {
+
+            if (manejarErrorAuth(respuesta.status)) return;
+
+            throw new Error(`HTTP ${respuesta.status}`);
+        }
+
+        showToast("Turno borrado");
+
+        await cargarHorarios();
+
+    } catch (error) {
+
+        console.error("ERROR BORRANDO TURNO:", error);
+
+        showToast("No se pudo borrar el turno");
     }
 }
 
 function inicializarHorarios() {
-
-    const boton = document.getElementById("btnGuardarHorarios");
-
-    if (boton) {
-        boton.addEventListener("click", guardarHorarios);
-    }
 
     cargarHorarios();
 }
