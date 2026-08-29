@@ -4544,3 +4544,41 @@ button {
     overflow-x: hidden;
     padding-right: 4px;
 }
+
+/* =========================================================
+   SCROLL INTERNO EN EL PANEL DE COBRO
+   
+   Antes: si el contenido (descuento + medios de pago +
+   efectivo + botón) no entraba en la altura que le daba el
+   grid, se cortaba sin forma de scrollear — el botón de
+   procesar quedaba tapado según el zoom/tamaño de pantalla.
+   
+   Ahora: el panel entero scrollea internamente si hace
+   falta, y el botón de cobrar nunca se aplasta.
+========================================================= */
+
+.payment-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.payment-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.payment-panel::-webkit-scrollbar-thumb {
+    background: #303945;
+    border-radius: 10px;
+}
+
+.payment-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* El botón de cobrar nunca se achica ni se corta */
+
+.payment-actions {
+    flex-shrink: 0;
+}

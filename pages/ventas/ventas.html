@@ -213,6 +213,22 @@
                         <button
                             type="button"
                             class="order-action"
+                            id="pendientesCartaButton"
+                            title="Pedidos de la carta digital esperando aprobación"
+                            style="position:relative;"
+                        >
+                            🌐
+                            <span>Pedidos web</span>
+                            <span
+                                id="pendientesCartaBadge"
+                                class="oculto-badge"
+                                style="position:absolute; top:-6px; right:-6px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:var(--danger); color:white; font-size:10px; font-weight:800; align-items:center; justify-content:center;"
+                            >0</span>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="order-action"
                             id="reprintOrderButton"
                             title="Reimprimir pedido"
                         >
@@ -609,6 +625,40 @@
                 class="client-modal-save"
             >
                 Guardar cliente
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL - PEDIDOS DE LA CARTA DIGITAL (pendientes)
+====================================================== -->
+
+<div
+    class="client-modal"
+    id="pendientesCartaModal"
+    style="display: none;"
+>
+
+    <div class="client-modal-box" style="width:min(560px, 100%);">
+
+        <div class="client-modal-header">
+            <h3>Pedidos web pendientes de aprobar</h3>
+            <button class="client-modal-close" type="button" id="pendientesCartaCerrar">✕</button>
+        </div>
+
+        <div class="client-form-body" id="pendientesCartaBody" style="max-height:65vh; overflow-y:auto;"></div>
+
+        <div class="client-modal-actions">
+            <button
+                type="button"
+                class="client-modal-save"
+                id="pendientesCartaCerrar2"
+            >
+                Cerrar
             </button>
         </div>
 

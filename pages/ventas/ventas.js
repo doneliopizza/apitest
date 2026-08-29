@@ -5383,6 +5383,203 @@ function mostrarBloqueoCajaCerrada() {
 
 
 /* =========================================================
+   PEDIDOS DE LA CARTA DIGITAL — pendientes de aprobar
+   ========================================================= */
+
+let intervaloPendientesCarta = null;
+
+async function cargarPendientesCarta() {
+
+    try {
+
+        const respuesta = await fetch(`${API_URL}/pedidos/pendientes-aprobacion`, {
+            method: "GET",
+            headers: authHeaders()
+        });
+
+        if (!respuesta.ok) {
+
+            if (manejarErrorAuth(respuesta.status)) return;
+
+            throw new Error(`HTTP ${respuesta.status}`);
+        }
+
+        const pendientes = await respuesta.json();
+
+        const badge = document.getElementById("pendientesCartaBadge");
+
+        if (badge) {
+
+            if (pendientes.length > 0) {
+
+                badge.textContent = pendientes.length;
+                badge.style.display = "flex";
+
+            } else {
+
+                badge.style.display = "none";
+            }
+        }
+
+        window._pendientesCartaCache = pendientes;
+
+        const modal = document.getElementById("pendientesCartaModal");
+
+        if (modal && modal.style.display !== "none") {
+
+            renderPendientesCarta(pendientes);
+        }
+
+    } catch (error) {
+
+        console.error("ERROR CARGANDO PEDIDOS PENDIENTES (CARTA):", error);
+    }
+}
+
+function renderPendientesCarta(pendientes) {
+
+    const body = document.getElementById("pendientesCartaBody");
+
+    if (!body) return;
+
+    if (!pendientes.length) {
+
+        body.innerHTML = `
+            <div style="text-align:center; padding:30px; color:var(--muted); font-size:13px;">
+                No hay pedidos web esperando aprobación.
+            </div>
+        `;
+
+        return;
+    }
+
+    body.innerHTML = pendientes.map(p => `
+        <div style="margin-bottom:12px; padding:12px; background:var(--panel-soft); border:1px solid var(--border); border-radius:9px;">
+
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <strong style="color:var(--text); font-size:13px;">#${escapeHtml(p.id)} — ${escapeHtml(p.cliente_nombre)}</strong>
+                <strong style="color:var(--text); font-size:13px;">${money(p.total)}</strong>
+            </div>
+
+            ${p.cliente_telefono ? `<div style="font-size:11.5px; color:var(--muted); margin-bottom:2px;">📞 ${escapeHtml(p.cliente_telefono)}</div>` : ""}
+
+            ${p.direccion_entrega ? `<div style="font-size:11.5px; color:var(--muted); margin-bottom:6px;">📍 ${escapeHtml(p.direccion_entrega)}</div>` : ""}
+
+            <div style="font-size:11px; color:var(--muted); margin-bottom:8px;">
+                ${p.items.map(i => `${i.cantidad}x ${escapeHtml(i.nombre)}`).join(" · ")}
+            </div>
+
+            <div style="display:flex; gap:8px;">
+                <button
+                    type="button"
+                    data-aceptar-carta="${p.id}"
+                    style="flex:1; height:32px; border:1px solid var(--success); border-radius:7px; background:var(--success); color:white; font-size:11.5px; font-weight:800;"
+                >
+                    ✓ Aceptar
+                </button>
+                <button
+                    type="button"
+                    data-rechazar-carta="${p.id}"
+                    style="flex:1; height:32px; border:1px solid var(--danger); border-radius:7px; background:transparent; color:var(--danger); font-size:11.5px; font-weight:800;"
+                >
+                    ✕ Rechazar
+                </button>
+            </div>
+
+        </div>
+    `).join("");
+
+    body.querySelectorAll("[data-aceptar-carta]").forEach(btn => {
+
+        btn.addEventListener("click", () => procesarPendienteCarta(btn.dataset.aceptarCarta, "aceptar"));
+    });
+
+    body.querySelectorAll("[data-rechazar-carta]").forEach(btn => {
+
+        btn.addEventListener("click", () => procesarPendienteCarta(btn.dataset.rechazarCarta, "rechazar"));
+    });
+}
+
+async function procesarPendienteCarta(pedidoId, accion) {
+
+    if (accion === "rechazar" && !confirm(`¿Rechazar el pedido #${pedidoId}? El cliente va a ver que no se pudo confirmar.`)) {
+        return;
+    }
+
+    try {
+
+        const respuesta = await fetch(`${API_URL}/pedidos/${pedidoId}/${accion}`, {
+            method: "PUT",
+            headers: authHeaders()
+        });
+
+        if (!respuesta.ok) {
+
+            if (manejarErrorAuth(respuesta.status)) return;
+
+            throw new Error(`HTTP ${respuesta.status}`);
+        }
+
+        showToast(accion === "aceptar" ? `Pedido #${pedidoId} aceptado` : `Pedido #${pedidoId} rechazado`);
+
+        await cargarPendientesCarta();
+
+        renderPendientesCarta(window._pendientesCartaCache || []);
+
+        if (accion === "aceptar") {
+
+            await cargarPedidosActivos(true);
+        }
+
+    } catch (error) {
+
+        console.error("ERROR PROCESANDO PEDIDO CARTA:", error);
+
+        showToast("No se pudo procesar el pedido");
+    }
+}
+
+function inicializarPendientesCarta() {
+
+    const boton = document.getElementById("pendientesCartaButton");
+    const modal = document.getElementById("pendientesCartaModal");
+    const cerrar = document.getElementById("pendientesCartaCerrar");
+    const cerrar2 = document.getElementById("pendientesCartaCerrar2");
+
+    if (boton) {
+
+        boton.addEventListener("click", () => {
+
+            if (modal) modal.style.display = "flex";
+
+            renderPendientesCarta(window._pendientesCartaCache || []);
+        });
+    }
+
+    [cerrar, cerrar2].forEach(btn => {
+
+        if (btn) {
+            btn.addEventListener("click", () => {
+                if (modal) modal.style.display = "none";
+            });
+        }
+    });
+
+    if (modal) {
+
+        modal.addEventListener("click", event => {
+
+            if (event.target === modal) modal.style.display = "none";
+        });
+    }
+
+    cargarPendientesCarta();
+
+    intervaloPendientesCarta = setInterval(cargarPendientesCarta, 15000);
+}
+
+
+/* =========================================================
    INICIALIZACIÓN
    ========================================================= */
 
@@ -5427,6 +5624,7 @@ async function inicializar() {
     inicializarDescuento();
     inicializarSelectorVariedad();
     inicializarEditarPedido();
+    inicializarPendientesCarta();
 
     verificarCajaAbierta();
 
@@ -5492,6 +5690,11 @@ window.LightPOS.ventas = {
     destroy: function () {
 
         detenerActualizacionAutomaticaPedidos();
+
+        if (intervaloPendientesCarta) {
+            clearInterval(intervaloPendientesCarta);
+            intervaloPendientesCarta = null;
+        }
 
         const overlay = document.getElementById("cajaCerradaOverlay");
 
