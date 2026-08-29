@@ -1650,7 +1650,10 @@ function editarItemCarrito(cartLineId) {
     if (nuevoPrecioTexto === null) return; // canceló
 
     const nuevoPrecio = Number(
-        String(nuevoPrecioTexto).replace(",", ".")
+        String(nuevoPrecioTexto)
+            .trim()
+            .replace(/\./g, "")   // punto = separador de miles (8.500 -> 8500)
+            .replace(",", ".")    // coma = decimal (8500,50 -> 8500.50)
     );
 
     if (!Number.isFinite(nuevoPrecio) || nuevoPrecio < 0) {
@@ -5464,25 +5467,45 @@ function sonarAvisoPedidoWeb() {
 
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // 2 "beeps" cortos, sin necesitar ningún archivo de audio
+        // Melodía ascendente de 3 notas, repetida 2 veces,
+        // con notas más largas — para que se note bien
+        // aunque haya ruido en el local.
 
-        [0, 0.22].forEach(delay => {
+        const frase = [
+            { frecuencia: 784 },   // Sol5
+            { frecuencia: 988 },   // Si5
+            { frecuencia: 1319 },  // Mi6
+        ];
 
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
+        const duracionNota = 0.32;
+        const espacioEntreNotas = 0.18;
+        const espacioEntreFrases = 0.55;
 
-            osc.type = "sine";
-            osc.frequency.value = 880;
+        [0, 1].forEach(repeticion => {
 
-            gain.gain.setValueAtTime(0.0001, ctx.currentTime + delay);
-            gain.gain.exponentialRampToValueAtTime(0.35, ctx.currentTime + delay + 0.02);
-            gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + 0.18);
+            const inicioFrase =
+                repeticion * (frase.length * espacioEntreNotas + espacioEntreFrases);
 
-            osc.connect(gain);
-            gain.connect(ctx.destination);
+            frase.forEach(({ frecuencia }, indice) => {
 
-            osc.start(ctx.currentTime + delay);
-            osc.stop(ctx.currentTime + delay + 0.2);
+                const inicio = inicioFrase + indice * espacioEntreNotas;
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = "triangle";
+                osc.frequency.value = frecuencia;
+
+                gain.gain.setValueAtTime(0.0001, ctx.currentTime + inicio);
+                gain.gain.exponentialRampToValueAtTime(0.32, ctx.currentTime + inicio + 0.03);
+                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + inicio + duracionNota);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(ctx.currentTime + inicio);
+                osc.stop(ctx.currentTime + inicio + duracionNota + 0.02);
+            });
         });
 
     } catch (error) {

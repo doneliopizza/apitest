@@ -41,6 +41,7 @@
     --sidebar-muted: #9a9fa8;
     --shadow:
         0 8px 25px rgba(0, 0, 0, .4);
+    color-scheme: dark;
 }
 
 /* =========================================================
@@ -74,6 +75,7 @@
     --sidebar-muted: #c9b9a3;
     --shadow:
         0 8px 25px rgba(40, 25, 10, .12);
+    color-scheme: light;
 }
 
 
@@ -4652,4 +4654,99 @@ button {
 
 .sidebar.collapsed .theme-toggle span.texto {
     display: none;
+}
+
+/* =========================================================
+   AVISO EMERGENTE — pedido nuevo de la carta digital
+========================================================= */
+
+.avisos-pedido-web-contenedor {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999999;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    max-width: 340px;
+}
+
+.aviso-pedido-web {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px 16px;
+
+    background: var(--panel);
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .4);
+
+    cursor: pointer;
+
+    animation: avisoPedidoWebEntrada .25s ease;
+}
+
+@keyframes avisoPedidoWebEntrada {
+
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.aviso-pedido-web-icono {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: var(--primary-gradient);
+
+    font-size: 17px;
+}
+
+.aviso-pedido-web-texto {
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.aviso-pedido-web-texto strong {
+    color: var(--text);
+    font-size: 13px;
+}
+
+.aviso-pedido-web-texto span {
+    color: var(--muted);
+    font-size: 11.5px;
+}
+
+.aviso-pedido-web-cerrar {
+    flex-shrink: 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.aviso-pedido-web-cerrar:hover {
+    color: var(--text);
 }
