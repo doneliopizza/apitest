@@ -2283,6 +2283,14 @@ function limpiarPedidoActual() {
 
     if (direccionInput) direccionInput.value = "";
 
+    const horaProgramadaCheckbox = document.getElementById("pedidoProgramadoCheckbox");
+    const horaProgramadaBox = document.getElementById("horaProgramadaBox");
+    const horaProgramadaInput = document.getElementById("horaProgramadaInput");
+
+    if (horaProgramadaCheckbox) horaProgramadaCheckbox.checked = false;
+    if (horaProgramadaBox) horaProgramadaBox.style.display = "none";
+    if (horaProgramadaInput) horaProgramadaInput.value = "";
+
     actualizarVisibilidadDireccion();
 
     categoriaActual =
@@ -2738,6 +2746,9 @@ async function procesarPedido() {
 
         observaciones:
             null,
+
+        hora_programada:
+            obtenerHoraProgramada(),
 
         detalle:
             carrito.map(item => {
@@ -5271,6 +5282,46 @@ function inicializarVentaMostrador() {
         }
     );
 }
+
+
+/* =========================================================
+   HORA PROGRAMADA (opcional) — pedir para más tarde
+   ========================================================= */
+
+function inicializarPedidoProgramado() {
+
+    const checkbox = document.getElementById("pedidoProgramadoCheckbox");
+    const box = document.getElementById("horaProgramadaBox");
+
+    if (!checkbox) return;
+
+    checkbox.addEventListener("change", () => {
+
+        if (box) {
+            box.style.display = checkbox.checked ? "block" : "none";
+        }
+
+        if (!checkbox.checked) {
+
+            const input = document.getElementById("horaProgramadaInput");
+
+            if (input) input.value = "";
+        }
+    });
+}
+
+function obtenerHoraProgramada() {
+
+    const checkbox = document.getElementById("pedidoProgramadoCheckbox");
+    const input = document.getElementById("horaProgramadaInput");
+
+    if (!checkbox || !checkbox.checked || !input || !input.value) {
+        return null;
+    }
+
+    return input.value;
+}
+
 /* =========================================================
    BOTÓN PROCESAR
    ========================================================= */
@@ -5871,6 +5922,7 @@ async function inicializar() {
     inicializarBotonVaciar();
     inicializarClientes();
     inicializarVentaMostrador();
+    inicializarPedidoProgramado();
     inicializarProcesarPedido();
     inicializarMediosPago();
     inicializarDescuento();
