@@ -5,39 +5,66 @@
 * {
     box-sizing: border-box;
 }
+/* =========================================================
+   TEMA — GASTRONÓMICO (oscuro por defecto)
+   Terracota / tostado, como horno de pizza a leña.
+========================================================= */
 
 :root {
-    --background: #171a1f;
-    --panel: #20242a;
-    --panel-light: #252a31;
-    --panel-soft: #252a31;
-    --panel-hover: #2b3038;
-
-    --border: #343a43;
-    --border-light: #3d444e;
-
-    --input: #171b21;
-
-    --text: #e5e7eb;
-    --text-soft: #c4c9d1;
-    --muted: #8d96a3;
-
-    --primary: #4b83b5;
-    --primary-dark: #3e719d;
-    --primary-soft: #293b4d;
-
-    --success: #4d9a72;
-    --success-soft: #263c32;
-
-    --danger: #b96565;
-    --danger-soft: #402c2c;
-
-    --sidebar: #111419;
-    --sidebar-hover: #1d2229;
-    --sidebar-muted: #858e9b;
-
+    --background: #191410;
+    --panel: #221a15;
+    --panel-light: #281f19;
+    --panel-soft: #281f19;
+    --panel-hover: #332821;
+    --border: #3a2d24;
+    --border-light: #47372c;
+    --input: #140f0c;
+    --text: #f2e9dc;
+    --text-soft: #d8c7b0;
+    --muted: #9c8770;
+    --primary: #d97f3f;
+    --primary-dark: #b8642e;
+    --primary-soft: #3d2a1a;
+    --success: #6fa050;
+    --success-soft: #263420;
+    --danger: #c1594a;
+    --danger-soft: #3a2420;
+    --sidebar: #120d0a;
+    --sidebar-hover: #1e1610;
+    --sidebar-muted: #a4906f;
     --shadow:
-        0 8px 25px rgba(0, 0, 0, .22);
+        0 8px 25px rgba(0, 0, 0, .35);
+}
+
+/* =========================================================
+   TEMA — CLARO
+   Se activa poniendo data-theme="light" en <html>.
+========================================================= */
+
+[data-theme="light"] {
+    --background: #faf5ee;
+    --panel: #ffffff;
+    --panel-light: #fbf6ef;
+    --panel-soft: #f3e8d8;
+    --panel-hover: #ebdcc4;
+    --border: #e2d0b4;
+    --border-light: #ecdcc0;
+    --input: #ffffff;
+    --text: #2c2115;
+    --text-soft: #4d3c28;
+    --muted: #8b7358;
+    --primary: #c2612e;
+    --primary-dark: #a24f22;
+    --primary-soft: #f4e2cc;
+    --success: #557a3a;
+    --success-soft: #e9f1de;
+    --danger: #ad4936;
+    --danger-soft: #fae3dc;
+    --sidebar: #2c2115;
+    --sidebar-hover: #3a2c1c;
+    --sidebar-muted: #c2ac8c;
+    --shadow:
+        0 8px 25px rgba(60, 40, 20, .12);
 }
 
 
@@ -4581,4 +4608,39 @@ button {
 
 .payment-actions {
     flex-shrink: 0;
+}
+
+
+/* =========================================================
+   BOTÓN DE TOGGLE (claro / oscuro) — va en el sidebar
+========================================================= */
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: 38px;
+    padding: 0 12px;
+    margin-top: 8px;
+    border: 1px solid var(--border-light);
+    border-radius: 9px;
+    background: var(--panel-hover);
+    color: var(--sidebar-muted);
+    font-size: 12px;
+    font-weight: 700;
+    transition: .15s;
+}
+
+.theme-toggle:hover {
+    border-color: var(--primary);
+    color: var(--text);
+}
+
+.theme-toggle span.icono {
+    font-size: 14px;
+}
+
+.sidebar.collapsed .theme-toggle span.texto {
+    display: none;
 }

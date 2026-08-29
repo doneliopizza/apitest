@@ -740,11 +740,61 @@ async function navigate() {
    INICIALIZACIÓN
    ========================================================= */
 
+/* =========================================================
+   TEMA — claro / oscuro
+   ========================================================= */
+
+function inicializarThemeToggle() {
+
+    const boton = document.getElementById("themeToggleBtn");
+    const icono = document.getElementById("themeToggleIcono");
+    const texto = document.getElementById("themeToggleTexto");
+
+    if (!boton) {
+        return;
+    }
+
+    function aplicarEstadoBoton(tema) {
+
+        if (icono) {
+            icono.textContent = tema === "light" ? "☀️" : "🌙";
+        }
+
+        if (texto) {
+            texto.textContent = tema === "light" ? "Modo claro" : "Modo oscuro";
+        }
+    }
+
+    const temaActual = localStorage.getItem("lightpos_tema") || "dark";
+
+    aplicarEstadoBoton(temaActual);
+
+    boton.addEventListener("click", () => {
+
+        const esClaroAhora =
+            document.documentElement.getAttribute("data-theme") === "light";
+
+        const nuevoTema = esClaroAhora ? "dark" : "light";
+
+        if (nuevoTema === "light") {
+            document.documentElement.setAttribute("data-theme", "light");
+        } else {
+            document.documentElement.removeAttribute("data-theme");
+        }
+
+        localStorage.setItem("lightpos_tema", nuevoTema);
+
+        aplicarEstadoBoton(nuevoTema);
+    });
+}
+
+
 function inicializarShell() {
 
     renderMenu();
     inicializarSidebarShell();
     inicializarLogout();
+    inicializarThemeToggle();
 
     window.addEventListener("hashchange", navigate);
 

@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script>
+        (function () {
+            var tema = localStorage.getItem("lightpos_tema") || "dark";
+            if (tema === "light") {
+                document.documentElement.setAttribute("data-theme", "light");
+            }
+        })();
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -53,6 +62,11 @@
                  El botón de cerrar sesión se agrega al final,
                  como último ítem de la lista. -->
             <nav class="menu" id="mainMenu"></nav>
+
+            <button type="button" class="theme-toggle" id="themeToggleBtn">
+                <span class="icono" id="themeToggleIcono">🌙</span>
+                <span class="texto" id="themeToggleTexto">Modo oscuro</span>
+            </button>
 
             <div class="connection-status">
 
