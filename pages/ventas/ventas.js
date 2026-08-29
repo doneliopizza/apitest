@@ -3896,6 +3896,19 @@ function renderOrders(pedidos) {
                                     : ""
                             }
 
+                            ${
+                                pedido.fecha_programada
+                                    ? `
+                                        <span
+                                            class="order-client-address"
+                                            style="color:var(--primary); font-weight:800;"
+                                        >
+                                            ⏰ Para las ${new Date(pedido.fecha_programada).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
+                                        </span>
+                                      `
+                                    : ""
+                            }
+
                         </div>
 
 
@@ -4839,6 +4852,15 @@ function renderDetallePedido(pedido) {
                     : ""
             }
 
+            ${
+                pedido.fecha_programada
+                    ? `<div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span style="color:var(--muted);">Programado para</span>
+                        <strong style="color:var(--primary);">⏰ ${new Date(pedido.fecha_programada).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}</strong>
+                       </div>`
+                    : ""
+            }
+
             <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                 <span style="color:var(--muted);">Tipo de entrega</span>
                 <strong style="color:var(--text);">${escapeHtml(tipoEntrega)}</strong>
@@ -5682,6 +5704,12 @@ function renderPendientesCarta(pendientes) {
                 <strong style="color:var(--text); font-size:13px;">#${escapeHtml(p.id)} — ${escapeHtml(p.cliente_nombre)}</strong>
                 <strong style="color:var(--text); font-size:13px;">${money(p.total)}</strong>
             </div>
+
+            ${p.fecha_programada ? `
+                <div style="display:inline-block; margin-bottom:6px; padding:3px 8px; border-radius:20px; background:var(--primary-soft); color:var(--primary); font-size:11px; font-weight:800;">
+                    ⏰ Programado para las ${new Date(p.fecha_programada).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
+                </div>
+            ` : ""}
 
             ${p.cliente_telefono ? `<div style="font-size:11.5px; color:var(--muted); margin-bottom:2px;">📞 ${escapeHtml(p.cliente_telefono)}</div>` : ""}
 
