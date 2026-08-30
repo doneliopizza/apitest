@@ -4020,11 +4020,8 @@ function renderOrders(pedidos) {
                                         <button
                                             type="button"
                                             class="order-next-button"
-                                            onclick="
-                                                avanzarPedido(
-                                                    ${Number(pedido.id)}
-                                                )
-                                            "
+                                            data-avanzar-id="${Number(pedido.id)}"
+                                            data-siguiente-nombre="${escapeHtml(siguienteNombre)}"
                                         >
                                             ${escapeHtml(
                                                 siguienteNombre
@@ -4045,6 +4042,21 @@ function renderOrders(pedidos) {
     /* =====================================================
        SELECCIONAR PEDIDO
        ===================================================== */
+
+    container
+        .querySelectorAll("[data-avanzar-id]")
+        .forEach(boton => {
+
+            boton.addEventListener("click", event => {
+
+                event.stopPropagation();
+
+                const pedidoId = Number(boton.dataset.avanzarId);
+                const siguienteNombre = boton.dataset.siguienteNombre || "";
+
+                manejarAvanzarPedido(pedidoId, siguienteNombre);
+            });
+        });
 
     container
         .querySelectorAll(".order-row")
@@ -4438,6 +4450,152 @@ function detenerActualizacionAutomaticaPedidos() {
 /* =========================================================
    AVANZAR PEDIDO
    ========================================================= */
+
+/* =========================================================
+   AVANZAR PEDIDO — desvía a elegir repartidor si el siguiente
+   paso es "Enviar delivery"
+   ========================================================= */
+
+function manejarAvanzarPedido(pedidoId, siguienteNombre) {
+
+    const esPasoDelivery =
+        /delivery|envio|env\u00edo|enviar/i.test(siguienteNombre);
+
+    if (esPasoDelivery) {
+
+        abrirSelectorRepartidor(pedidoId);
+
+        return;
+    }
+
+    avanzarPedido(pedidoId);
+}
+
+async function abrirSelectorRepartidor(pedidoId) {
+
+    let repartidores = [];
+
+    try {
+
+        const respuesta = await fetch(`${API_URL}/colaboradores/repartidores`, {
+            headers: authHeaders()
+        });
+
+        if (!respuesta.ok) {
+
+            if (manejarErrorAuth(respuesta.status)) return;
+
+            throw new Error(`HTTP ${respuesta.status}`);
+        }
+
+        repartidores = await respuesta.json();
+
+    } catch (error) {
+
+        console.error("ERROR CARGANDO REPARTIDORES:", error);
+
+        showToast("No se pudo cargar la lista de repartidores");
+
+        return;
+    }
+
+    if (!repartidores.length) {
+
+        showToast("No hay ningún colaborador con rol de Delivery activo");
+
+        // Igual dejamos avanzar el pedido sin asignar a nadie
+        avanzarPedido(pedidoId);
+
+        return;
+    }
+
+    let modal = document.getElementById("repartidorModal");
+
+    if (!modal) {
+
+        modal = document.createElement("div");
+        modal.id = "repartidorModal";
+        modal.className = "client-modal";
+
+        document.body.appendChild(modal);
+
+        modal.addEventListener("click", event => {
+
+            if (event.target === modal) modal.remove();
+        });
+    }
+
+    modal.innerHTML = `
+        <div class="client-modal-box" style="width:min(360px, 100%);">
+
+            <div class="client-modal-header">
+                <h3>¿Quién lo reparte?</h3>
+                <button type="button" class="client-modal-close" id="repartidorModalCerrar">✕</button>
+            </div>
+
+            <div class="client-form-body">
+
+                ${repartidores.map(r => `
+                    <button
+                        type="button"
+                        data-repartidor-id="${r.id}"
+                        style="width:100%; height:44px; margin-bottom:8px; border:1px solid var(--border); border-radius:8px; background:var(--panel-soft); color:var(--text); font-size:13px; font-weight:700;"
+                    >
+                        🛵 ${escapeHtml(r.nombre)}
+                    </button>
+                `).join("")}
+
+            </div>
+
+        </div>
+    `;
+
+    modal.style.display = "flex";
+
+    modal.querySelector("#repartidorModalCerrar")
+        .addEventListener("click", () => modal.remove());
+
+    modal.querySelectorAll("[data-repartidor-id]").forEach(btn => {
+
+        btn.addEventListener("click", async () => {
+
+            const repartidorId = Number(btn.dataset.repartidorId);
+
+            modal.remove();
+
+            await asignarYAvanzar(pedidoId, repartidorId);
+        });
+    });
+}
+
+async function asignarYAvanzar(pedidoId, repartidorId) {
+
+    try {
+
+        const respuesta = await fetch(
+            `${API_URL}/colaboradores/asignar-delivery/${pedidoId}/${repartidorId}`,
+            { method: "PUT", headers: authHeaders() }
+        );
+
+        if (!respuesta.ok) {
+
+            if (manejarErrorAuth(respuesta.status)) return;
+
+            throw new Error(`HTTP ${respuesta.status}`);
+        }
+
+        showToast("Repartidor asignado");
+
+    } catch (error) {
+
+        console.error("ERROR ASIGNANDO REPARTIDOR:", error);
+
+        showToast("No se pudo asignar el repartidor, igual avanzamos el pedido");
+    }
+
+    await avanzarPedido(pedidoId);
+}
+
 
 async function avanzarPedido(pedidoId) {
 
