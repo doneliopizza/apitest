@@ -26,6 +26,7 @@ const NAV = [
     { route: "home", label: "Inicio", icon: "🏠" },
     { route: "ventas", label: "Ventas (POS)", icon: "🛒" },
     { route: "kds", label: "KDS · Cocina", icon: "🍳" },
+    { route: "delivery", label: "Delivery", icon: "🛵" },
     { route: "clientes", label: "Clientes", icon: "👥" },
     { route: "productos", label: "Productos", icon: "📦" },
     { route: "cajas", label: "Cajas", icon: "💰" },
@@ -59,7 +60,8 @@ const ROUTES = {};
 
                 ROUTES[child.route] = {
                     title: `${item.label} · ${child.label}`,
-                    group: item.label
+                    group: item.label,
+                    modulo: child.route.split("/")[0]
                 };
             });
 
@@ -68,7 +70,8 @@ const ROUTES = {};
 
         ROUTES[item.route] = {
             title: item.label,
-            group: null
+            group: null,
+            modulo: item.route
         };
     });
 
@@ -92,6 +95,57 @@ ROUTES["home"].load = loadHome;
 
 ROUTES["reportes"].load = loadReportes;
 
+ROUTES["colaboradores"].load = loadColaboradores;
+
+ROUTES["delivery"].load = loadDelivery;
+
+
+/* =========================================================
+   PERMISOS — qué módulos puede ver este usuario
+   ========================================================= */
+
+function obtenerModulosPermitidos() {
+
+    try {
+
+        const guardado = localStorage.getItem("lightpos_modulos");
+
+        if (!guardado) return null; // null = sin restricción (compatibilidad)
+
+        return JSON.parse(guardado);
+
+    } catch {
+
+        return null;
+    }
+}
+
+function tieneAccesoARuta(route) {
+
+    const modulos = obtenerModulosPermitidos();
+
+    if (modulos === null) return true; // sin dato guardado, no bloqueamos
+
+    const info = ROUTES[route];
+
+    if (!info) return false;
+
+    return modulos.includes(info.modulo);
+}
+
+function primeraRutaPermitida() {
+
+    const modulos = obtenerModulosPermitidos();
+
+    if (modulos === null) return DEFAULT_ROUTE;
+
+    const candidata = Object.keys(ROUTES).find(
+        route => ROUTES[route].load && modulos.includes(ROUTES[route].modulo)
+    );
+
+    return candidata || null;
+}
+
 
 /* =========================================================
    ESTADO
@@ -112,7 +166,34 @@ function renderMenu() {
         return;
     }
 
-    const items = NAV
+    const modulosPermitidos = obtenerModulosPermitidos();
+
+    const navFiltrado = NAV
+        .map(item => {
+
+            if (item.children) {
+
+                const children = item.children.filter(child => {
+
+                    if (modulosPermitidos === null) return true;
+
+                    const modulo = child.route.split("/")[0];
+
+                    return modulosPermitidos.includes(modulo);
+                });
+
+                if (!children.length) return null;
+
+                return { ...item, children };
+            }
+
+            if (modulosPermitidos === null) return item;
+
+            return modulosPermitidos.includes(item.route) ? item : null;
+        })
+        .filter(Boolean);
+
+    const items = navFiltrado
         .map(item => {
 
             if (item.children) {
@@ -683,6 +764,104 @@ async function loadReportes(viewRoot) {
 
 
 /* =========================================================
+   MÓDULO: COLABORADORES
+   ========================================================= */
+
+async function loadColaboradores(viewRoot) {
+
+    const respuesta = await fetch("pages/colaboradores/colaboradores.html");
+
+    if (!respuesta.ok) {
+        throw new Error(
+            `No se encontró pages/colaboradores/colaboradores.html (HTTP ${respuesta.status})`
+        );
+    }
+
+    const html = await respuesta.text();
+
+    viewRoot.innerHTML = html;
+
+    const script = document.createElement("script");
+
+    script.src = `pages/colaboradores/colaboradores.js?v=${Date.now()}`;
+
+    const cargado = new Promise(resolve => {
+        script.onload = resolve;
+    });
+
+    document.body.appendChild(script);
+
+    await cargado;
+
+    if (window.LightPOS?.colaboradores?.init) {
+        window.LightPOS.colaboradores.init();
+    }
+
+    return {
+        destroy() {
+
+            if (window.LightPOS?.colaboradores?.destroy) {
+                window.LightPOS.colaboradores.destroy();
+            }
+
+            script.remove();
+
+            delete window.LightPOS?.colaboradores;
+        }
+    };
+}
+
+
+/* =========================================================
+   MÓDULO: DELIVERY
+   ========================================================= */
+
+async function loadDelivery(viewRoot) {
+
+    const respuesta = await fetch("pages/delivery/delivery.html");
+
+    if (!respuesta.ok) {
+        throw new Error(
+            `No se encontró pages/delivery/delivery.html (HTTP ${respuesta.status})`
+        );
+    }
+
+    const html = await respuesta.text();
+
+    viewRoot.innerHTML = html;
+
+    const script = document.createElement("script");
+
+    script.src = `pages/delivery/delivery.js?v=${Date.now()}`;
+
+    const cargado = new Promise(resolve => {
+        script.onload = resolve;
+    });
+
+    document.body.appendChild(script);
+
+    await cargado;
+
+    if (window.LightPOS?.delivery?.init) {
+        window.LightPOS.delivery.init();
+    }
+
+    return {
+        destroy() {
+
+            if (window.LightPOS?.delivery?.destroy) {
+                window.LightPOS.delivery.destroy();
+            }
+
+            script.remove();
+
+            delete window.LightPOS?.delivery;
+        }
+    };
+}
+
+
+/* =========================================================
    NAVEGACIÓN
    ========================================================= */
 
@@ -692,6 +871,17 @@ async function navigate() {
 
     if (!ROUTES[route]) {
         route = DEFAULT_ROUTE;
+    }
+
+    if (!tieneAccesoARuta(route)) {
+
+        const fallback = primeraRutaPermitida();
+
+        if (fallback && fallback !== route) {
+
+            location.hash = `#/${fallback}`;
+            return;
+        }
     }
 
     if (currentModule?.destroy) {
@@ -802,9 +992,12 @@ function inicializarShell() {
 
         const ultima = localStorage.getItem("lightpos_last_route");
 
-        location.hash = `#/${
-            ultima && ROUTES[ultima] ? ultima : DEFAULT_ROUTE
-        }`;
+        const rutaValida =
+            ultima && ROUTES[ultima] && tieneAccesoARuta(ultima)
+                ? ultima
+                : (tieneAccesoARuta(DEFAULT_ROUTE) ? DEFAULT_ROUTE : primeraRutaPermitida());
+
+        location.hash = `#/${rutaValida || DEFAULT_ROUTE}`;
 
         return;
     }

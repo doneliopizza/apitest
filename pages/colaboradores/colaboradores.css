@@ -1,0 +1,17 @@
+/* =========================================================
+   COLABORADORES — reusa la mayoría de las clases de
+   productos.css / configuracion.css, que ya cargan global.
+   Esto son solo los toques puntuales de esta pantalla.
+========================================================= */
+
+#colRolesCheckboxes,
+#rolPermisosGrid {
+    max-height: 320px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+#rolesLista .pgrupo-item-header span {
+    color: var(--muted);
+    font-size: 11px;
+}

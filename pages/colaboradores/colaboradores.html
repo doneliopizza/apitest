@@ -1,0 +1,165 @@
+<section class="config-page">
+
+    <div class="config-header">
+        <span class="eyebrow">RECURSOS HUMANOS</span>
+        <h2>Colaboradores</h2>
+    </div>
+
+    <div class="config-tabs">
+        <button type="button" class="ptab active" data-coltab="lista">Colaboradores</button>
+        <button type="button" class="ptab" data-coltab="roles">Roles y permisos</button>
+        <button type="button" class="ptab" data-coltab="fichadas">Fichadas</button>
+    </div>
+
+
+    <!-- =====================================================
+         TAB: LISTA DE COLABORADORES
+    ====================================================== -->
+
+    <div class="ctab-panel" id="colTabLista">
+
+        <p class="config-subtexto">
+            Cada colaborador entra con su propio email y contraseña —
+            ve solo los módulos que le correspondan según sus roles.
+        </p>
+
+        <div class="ptab-actions">
+            <input type="text" id="colBuscar" placeholder="Buscar colaborador...">
+            <button type="button" class="btn-primario" id="colNuevoBtn">+ Nuevo colaborador</button>
+        </div>
+
+        <div class="p-lista" id="colLista"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TAB: ROLES Y PERMISOS
+    ====================================================== -->
+
+    <div class="ctab-panel" id="colTabRoles" style="display:none;">
+
+        <p class="config-subtexto">
+            Cada rol es un combo de permisos. Si le agregás/sacás
+            algo a un rol acá, afecta a TODOS los colaboradores
+            que tengan ese rol asignado.
+        </p>
+
+        <div id="rolesLista"></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         TAB: FICHADAS
+    ====================================================== -->
+
+    <div class="ctab-panel" id="colTabFichadas" style="display:none;">
+
+        <div class="pfiltros-row">
+
+            <input type="date" id="fichDesde">
+            <span style="color:var(--muted); font-size:12px;">a</span>
+            <input type="date" id="fichHasta">
+            <button type="button" class="btn-secundario" id="fichBuscarBtn">Buscar</button>
+
+        </div>
+
+        <div id="fichResumen"></div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     MODAL - CREAR / EDITAR COLABORADOR
+====================================================== -->
+
+<div class="pmodal" id="colModal" style="display:none;">
+
+    <div class="pmodal-box">
+
+        <div class="pmodal-header">
+            <h3 id="colModalTitulo">Nuevo colaborador</h3>
+            <button type="button" id="colModalCerrar">✕</button>
+        </div>
+
+        <div class="pmodal-body">
+
+            <div class="pform-field">
+                <label>Nombre</label>
+                <input type="text" id="colNombre" placeholder="Nombre completo">
+            </div>
+
+            <div class="pform-field">
+                <label>Email (usuario de login)</label>
+                <input type="email" id="colEmail" placeholder="nombre@ejemplo.com">
+            </div>
+
+            <div class="pform-field">
+                <label id="colPasswordLabel">Contraseña</label>
+                <input type="password" id="colPassword" placeholder="••••••••">
+            </div>
+
+            <div class="pform-row">
+
+                <div class="pform-field">
+                    <label>Teléfono</label>
+                    <input type="text" id="colTelefono" placeholder="Opcional">
+                </div>
+
+                <div class="pform-field">
+                    <label>Salario (opcional, RRHH)</label>
+                    <input type="number" id="colSalario" min="0" placeholder="Opcional">
+                </div>
+
+            </div>
+
+            <div class="pcomponentes-builder">
+
+                <label>Roles</label>
+
+                <div id="colRolesCheckboxes"></div>
+
+            </div>
+
+        </div>
+
+        <div class="pmodal-actions">
+            <button type="button" id="colModalCancelar">Cancelar</button>
+            <button type="button" class="btn-primario" id="colModalGuardar">Guardar</button>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL - EDITAR PERMISOS DE UN ROL
+====================================================== -->
+
+<div class="pmodal" id="rolModal" style="display:none;">
+
+    <div class="pmodal-box pmodal-box-lg">
+
+        <div class="pmodal-header">
+            <h3 id="rolModalTitulo">Editar rol</h3>
+            <button type="button" id="rolModalCerrar">✕</button>
+        </div>
+
+        <div class="pmodal-body">
+
+            <div id="rolPermisosGrid"></div>
+
+        </div>
+
+        <div class="pmodal-actions">
+            <button type="button" id="rolModalCancelar">Cancelar</button>
+            <button type="button" class="btn-primario" id="rolModalGuardar">Guardar</button>
+        </div>
+
+    </div>
+
+</div>
