@@ -2662,6 +2662,7 @@ button {
         100px
         100px
         60px
+        90px
         minmax(230px, 1.4fr);
 
     align-items: center;
@@ -2679,6 +2680,15 @@ button {
         background .15s ease,
         border-color .15s ease,
         box-shadow .15s ease;
+}
+
+.order-repartidor-col {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-soft);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* =========================================================
@@ -2921,6 +2931,7 @@ button {
             90px
             90px
             55px
+            80px
             minmax(210px, 1.4fr);
     }
 }
@@ -3689,11 +3700,13 @@ button {
 
     grid-template-rows:
         auto
+        auto
         auto;
 
     grid-template-areas:
         "num    cliente  total"
-        "pago   tiempo   estado";
+        "pago   tiempo   estado"
+        "repartidor repartidor repartidor";
 
     column-gap: 10px;
     row-gap: 9px;
@@ -3743,6 +3756,19 @@ button {
     .order-time-col {
         grid-area: tiempo;
         justify-self: center;
+    }
+
+    .order-repartidor-col {
+        grid-area: repartidor;
+        font-size: 11px;
+        padding-top: 4px;
+        border-top: 1px dashed var(--border-light);
+    }
+
+    .order-repartidor-col:empty {
+        display: none;
+        border-top: 0;
+        padding-top: 0;
     }
 
     .order-status-info {

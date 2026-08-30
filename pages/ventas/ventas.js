@@ -3981,6 +3981,20 @@ function renderOrders(pedidos) {
                         </div>
 
 
+                        <!-- REPARTIDOR -->
+
+                        <div
+                            class="
+                                order-col
+                                order-repartidor-col
+                            "
+                        >${
+                            pedido.repartidor_nombre
+                                ? `🛵 ${escapeHtml(pedido.repartidor_nombre)}`
+                                : ""
+                        }</div>
+
+
                         <!-- ESTADO + ACCIÓN -->
 
                         <div
@@ -5026,6 +5040,15 @@ function renderDetallePedido(pedido) {
                     ? `<div style="display:flex; justify-content:space-between; margin-bottom:4px;">
                         <span style="color:var(--muted);">Programado para</span>
                         <strong style="color:var(--primary);">⏰ ${new Date(pedido.fecha_programada).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}</strong>
+                       </div>`
+                    : ""
+            }
+
+            ${
+                pedido.repartidor_nombre
+                    ? `<div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                        <span style="color:var(--muted);">Repartidor</span>
+                        <strong style="color:var(--text);">🛵 ${escapeHtml(pedido.repartidor_nombre)}</strong>
                        </div>`
                     : ""
             }
